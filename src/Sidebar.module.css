@@ -64,3 +64,31 @@
   text-align: right;
   padding-right: 10px;
 }
+
+.branchRow td {
+  padding-top: 2px;
+  padding-bottom: 6px;
+}
+
+.branchLine {
+  margin-left: 16px;
+  padding-left: 10px;
+  border-left: 2px solid #555;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.branchMoveButton {
+  border: none;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.branchMoveButton:hover {
+  background-color: #333;
+  color: white;
+}

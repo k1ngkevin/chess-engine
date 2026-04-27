@@ -1,4 +1,7 @@
+import { useMemo } from "react";
+import React from "react";
 import styles from "./Sidebar.module.css";
+import { type Branch } from "./types.ts";
 
 type SidebarProps = {
   pgnState: {
@@ -9,15 +12,19 @@ type SidebarProps = {
   navigation: {
     onNextMove: () => void;
     onPrevMove: () => void;
-    gotoMove: (move: number) => void;
+    gotoMainlineMove: (move: number) => void;
+    gotoBranchMove: (branchId: string, move: number) => void;
     onBeginning: () => void;
     onEnd: () => void;
     returnToMainline: () => void;
   };
   gameState: {
+    branches: Branch[];
     mainlineMoves: string[];
     currentIndex: number;
     onMainLine: boolean;
+    currentBranchId: string | null;
+    currentBranchIndex: number;
   };
   actions: {
     onImportPgn: (pgn: string) => void;
@@ -34,18 +41,37 @@ const Sidebar = ({
   const {
     onNextMove,
     onPrevMove,
-    gotoMove,
+    gotoMainlineMove,
+    gotoBranchMove,
     onBeginning,
     onEnd,
     returnToMainline,
   } = navigation;
-  const { mainlineMoves, currentIndex, onMainLine } = gameState;
+  const {
+    branches,
+    mainlineMoves,
+    currentIndex,
+    onMainLine,
+    currentBranchId,
+    currentBranchIndex,
+  } = gameState;
+
   const { onImportPgn } = actions;
 
   const rows = [];
   for (let i = 0; i < mainlineMoves.length; i += 2) {
     rows.push(mainlineMoves.slice(i, i + 2));
   }
+
+  const branchesByStartIndex = useMemo(() => {
+    return branches.reduce<Record<number, Branch[]>>((acc, branch) => {
+      if (!acc[branch.startIndex]) {
+        acc[branch.startIndex] = [];
+      }
+      acc[branch.startIndex].push(branch);
+      return acc;
+    }, {});
+  }, [branches]);
 
   return (
     <div className={styles.sidebarContainer}>
@@ -98,23 +124,70 @@ const Sidebar = ({
         <table className={styles.movesTable}>
           <tbody>
             {rows.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                <td className={styles.movesNumber}>{rowIndex + 1}</td>
-                {row.map((move, moveIndex) => {
+              <React.Fragment key={rowIndex}>
+                <tr>
+                  <td className={styles.movesNumber}>{rowIndex + 1}</td>
+
+                  {row.map((move, moveIndex) => {
+                    const currentMove = rowIndex * 2 + moveIndex;
+                    const fenIndex = currentIndex + 1;
+
+                    return (
+                      <td key={currentMove}>
+                        <button
+                          className={`${styles.movesButton} 
+                        ${currentIndex === fenIndex ? styles.currentMove : ""}`}
+                          onClick={() => gotoMainlineMove(fenIndex)}
+                        >
+                          {move}
+                        </button>
+                      </td>
+                    );
+                  })}
+                  {row.length === 1 && <td key={`empty-${rowIndex}`} />}
+                </tr>
+
+                {row.map((_, moveIndex) => {
                   const currentMove = rowIndex * 2 + moveIndex;
-                  return (
-                    <td key={currentMove}>
-                      <button
-                        className={`${styles.movesButton} ${currentIndex === currentMove + 1 ? styles.currentMove : ""}`}
-                        onClick={() => gotoMove(currentMove + 1)}
-                      >
-                        {move}
-                      </button>
-                    </td>
-                  );
+                  const fenIndex = currentMove + 1;
+                  const branchesAfterThisMove =
+                    branchesByStartIndex[fenIndex] ?? [];
+
+                  if (branchesAfterThisMove.length === 0) return null;
+
+                  return branchesAfterThisMove.map((branch) => (
+                    <tr key={branch.id} className={styles.branchRow}>
+                      <td />
+
+                      <td colSpan={2}>
+                        <div className={styles.branchLine}>
+                          {branch.moves.map((branchMove, branchMoveIndex) => {
+                            const branchFenIndex = branchMoveIndex + 1;
+
+                            return (
+                              <button
+                                key={branchMoveIndex}
+                                className={`${styles.branchMoveButton} ${
+                                  !onMainLine &&
+                                  currentBranchId === branch.id &&
+                                  currentBranchIndex === branchFenIndex
+                                    ? styles.currentMove
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  gotoBranchMove(branch.id, branchFenIndex)
+                                }
+                              >
+                                {branchMove}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </td>
+                    </tr>
+                  ));
                 })}
-                {row.length === 1 && <td key={`empty-${rowIndex}`} />}
-              </tr>
+              </React.Fragment>
             ))}
           </tbody>
         </table>

@@ -4,6 +4,7 @@ import { Chess } from "chess.js";
 import Sidebar from "./Sidebar";
 import Analyze from "./Analyze";
 import EvaluationBar from "./EvaluationBar";
+import { type Branch } from "./types";
 import {
   analyzePosition,
   analyzeFenBatch,
@@ -25,16 +26,17 @@ const App = () => {
   const [mainlineFens, setMainlineFens] = useState<string[]>([
     new Chess().fen(),
   ]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [branchStartIndex, setBranchStartIndex] = useState<number | null>(null);
-  const [currentBranchIndex, setCurrentBranchIndex] = useState<number | null>(
-    null,
-  );
-  const [branchFens, setBranchFens] = useState<string[]>([]);
   const [currentFen, setCurrentFen] = useState(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   );
+
+  const [branches, setBranches] = useState<Branch[]>([]);
+
   const [isOnMainLine, setIsOnMainLine] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentBranchId, setCurrentBranchId] = useState<string | null>(null);
+  const [currentBranchIndex, setCurrentBranchIndex] = useState<number>(-1);
+
   const [bestMoves, setBestMoves] = useState<EngineMove[]>([]);
   const [bestMovesArr, setBestMovesArr] = useState<(EngineMove[] | null)[]>([]);
   const [playedMovesEval, setPlayedMovesEval] = useState<
@@ -99,9 +101,8 @@ const App = () => {
     setCurrentFen(mainlineFens[0]);
 
     if (!isOnMainLine) {
-      setBranchStartIndex(null);
-      setCurrentBranchIndex(null);
-      setBranchFens([]);
+      setCurrentBranchIndex(-1);
+      setCurrentBranchId(null);
     }
     setIsOnMainLine(true);
   }
@@ -113,84 +114,75 @@ const App = () => {
     playSound(mainlineMoves[lastIndex - 1]);
 
     if (!isOnMainLine) {
-      setBranchStartIndex(null);
-      setCurrentBranchIndex(null);
-      setBranchFens([]);
+      setCurrentBranchIndex(-1);
+      setCurrentBranchId(null);
     }
     setIsOnMainLine(true);
   }
 
-  function gotoMove(move: number) {
-    if (isOnMainLine) {
-      if (move >= 0 && move < mainlineFens.length) {
-        setCurrentIndex(move);
-        setCurrentFen(mainlineFens[move]);
-        playSound(mainlineMoves[move - 1]);
-      }
-    } else {
-      if (move >= 0 && move < branchFens.length) {
-        setCurrentBranchIndex(move);
-        setCurrentFen(branchFens[move]);
-        playSound(mainlineMoves[move - 1]);
-      }
+  function gotoMainlineMove(move: number) {
+    if (move < 0 || move >= mainlineFens.length) return;
+
+    setIsOnMainLine(true);
+    setCurrentBranchId(null);
+    setCurrentBranchIndex(-1);
+
+    setCurrentIndex(move);
+    setCurrentFen(mainlineFens[move]);
+    if (move > 0) {
+      playSound(mainlineMoves[move - 1]);
+    }
+  }
+
+  function gotoBranchMove(branchId: string, move: number) {
+    const branch = branches.find((branch) => branch.id === branchId);
+    if (!branch) return;
+    if (move < 0 || move >= branch.fens.length) return;
+
+    setIsOnMainLine(false);
+    setCurrentBranchId(branchId);
+    setCurrentBranchIndex(move);
+    setCurrentFen(branch.fens[move]);
+
+    if (move > 0) {
+      playSound(branch.moves[move - 1]);
     }
   }
 
   function nextMove() {
     if (isOnMainLine) {
-      if (currentIndex < mainlineMoves.length) {
-        const nextIndex = currentIndex + 1;
-        setCurrentIndex(nextIndex);
-        setCurrentFen(mainlineFens[nextIndex]);
-        playSound(mainlineMoves[nextIndex - 1]);
-      }
-    } else {
-      if (currentBranchIndex === null) return;
-
-      if (currentBranchIndex < branchFens.length) {
-        const nextIndex = currentBranchIndex + 1;
-        setCurrentBranchIndex(nextIndex);
-        setCurrentFen(branchFens[nextIndex]);
-        playSound(mainlineMoves[nextIndex - 1]);
-      }
+      gotoMainlineMove(currentIndex + 1);
+      return;
     }
+    if (!currentBranchId) return;
+    gotoBranchMove(currentBranchId, currentBranchIndex + 1);
   }
 
   function prevMove() {
     if (isOnMainLine) {
-      if (currentIndex > 0) {
-        const prevIndex = currentIndex - 1;
-        setCurrentIndex(prevIndex);
-        setCurrentFen(mainlineFens[prevIndex]);
-        playSound(mainlineMoves[prevIndex - 1]);
-      }
-    } else {
-      if (currentBranchIndex === null) return;
-
-      if (currentBranchIndex > 0) {
-        const prevIndex = currentBranchIndex - 1;
-        setCurrentBranchIndex(prevIndex);
-        setCurrentFen(branchFens[prevIndex]);
-        playSound(mainlineMoves[prevIndex - 1]);
-      } else if (branchStartIndex !== null) {
-        setIsOnMainLine(true);
-        setCurrentIndex(branchStartIndex);
-        setCurrentFen(mainlineFens[branchStartIndex]);
-        setCurrentBranchIndex(null);
-        playSound(mainlineMoves[branchStartIndex - 1]);
-      }
+      gotoMainlineMove(currentIndex - 1);
+      return;
     }
+
+    if (!currentBranchId) return;
+
+    if (currentBranchIndex > 0) {
+      gotoBranchMove(currentBranchId, currentBranchIndex + 1);
+      return;
+    }
+
+    const branch = branches.find((branch) => branch.id === currentBranchId);
+    if (!branch) return;
+    gotoMainlineMove(branch.startIndex);
   }
 
   function returnToMainline() {
-    if (branchStartIndex !== null) {
-      setCurrentFen(mainlineFens[branchStartIndex]);
-      setBranchStartIndex(null);
-      setCurrentBranchIndex(null);
-      setBranchFens([]);
-      setIsOnMainLine(true);
-      playSound(mainlineMoves[branchStartIndex - 1]);
-    }
+    if (!currentBranchIndex) return;
+
+    const branch = branches.find((branch) => branch.id === currentBranchId);
+    if (!branch) return;
+
+    gotoMainlineMove(branch.startIndex);
   }
 
   function playSound(move: string) {
@@ -390,35 +382,99 @@ const App = () => {
       const move = game.move({ from, to, promotion: "q" });
       const isAtEndOfMainline = currentIndex === mainlineFens.length - 1;
       if (isOnMainLine && isAtEndOfMainline) {
+        const nextIndex = currentIndex + 1;
         setMainlineMoves((prev) => [...prev, move.san]);
         setMainlineFens((prev) => [...prev, game.fen()]);
-        setCurrentIndex((prev) => prev + 1);
-        setIsOnMainLine(true);
-      } else if (isOnMainLine) {
-        setBranchStartIndex(currentIndex);
-        setBranchFens([currentFen, game.fen()]);
-        setCurrentBranchIndex(1);
-        setIsOnMainLine(false);
-      } else {
-        if (currentBranchIndex === null) {
-          setBranchFens([currentFen, game.fen()]);
-          setCurrentBranchIndex(1);
-        } else {
-          setBranchFens((prev) => [
-            ...prev.slice(0, currentBranchIndex + 1),
-            game.fen(),
-          ]);
 
-          setCurrentBranchIndex(currentBranchIndex + 1);
-        }
-        setIsOnMainLine(false);
+        setCurrentIndex(nextIndex);
+        setCurrentFen(game.fen());
+
+        setCurrentBranchId(null);
+        setCurrentBranchIndex(-1);
+        setIsOnMainLine(true);
+
+        playSound(move.san);
+        void analyzeUserMove(game.fen(), nextIndex);
+        return true;
       }
+
+      if (isOnMainLine) {
+        const branchId = crypto.randomUUID();
+        const newBranch: Branch = {
+          id: branchId,
+          startIndex: currentIndex,
+          moves: [move.san],
+          fens: [currentFen, game.fen()],
+          evaluations: [null],
+          bestMoves: [null],
+        };
+
+        setBranches((prev) => [...prev, newBranch]);
+
+        setCurrentBranchId(branchId);
+        setCurrentBranchIndex(1);
+        setCurrentFen(game.fen());
+        setIsOnMainLine(false);
+
+        playSound(move.san);
+        void analyzeBranchMove(branchId, game.fen(), 0);
+        return true;
+      }
+      if (!currentBranchId) return false;
+
+      const branch = branches.find((branch) => branch.id === currentBranchId);
+      if (!branch) return false;
+
+      const nextFenIndex = currentBranchIndex + 1;
+      const nextMoveIndex = nextFenIndex - 1;
+      setBranches((prev) =>
+        prev.map((branch) => {
+          if (branch.id !== currentBranchId) return branch;
+          return {
+            ...branch,
+            moves: [...branch.moves.slice(0, nextMoveIndex), move.san],
+            fens: [...branch.fens.slice(0, nextFenIndex), game.fen()],
+            evaluations: [...branch.evaluations.slice(0, nextMoveIndex), null],
+            bestMoves: [...branch.bestMoves.slice(0, nextMoveIndex), null],
+          };
+        }),
+      );
+      setCurrentBranchIndex(nextFenIndex);
       setCurrentFen(game.fen());
-      void analyzeUserMove(game.fen(), currentIndex + 1);
+      setIsOnMainLine(false);
+
+      playSound(move.san);
+      void analyzeBranchMove(currentBranchId, game.fen(), nextMoveIndex);
       return true;
     } catch {
       console.log("invalid move");
       return false;
+    }
+  }
+
+  async function analyzeBranchMove(id: string, fen: string, index: number) {
+    try {
+      const bestMovesResult = await analyzeFen(fen);
+      const evaluationResult = await getFenEvaluation(fen);
+
+      setBranches((prev) =>
+        prev.map((branch) => {
+          if (branch.id !== id) return branch;
+          const bestMovesCopy = [...branch.bestMoves];
+          const evaluationCopy = [...branch.evaluations];
+
+          bestMovesCopy[index] = bestMovesResult;
+          evaluationCopy[index] = evaluationResult;
+
+          return {
+            ...branch,
+            bestMoves: bestMovesCopy,
+            evaluations: evaluationCopy,
+          };
+        }),
+      );
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -529,15 +585,19 @@ const App = () => {
           navigation={{
             onNextMove: nextMove,
             onPrevMove: prevMove,
-            gotoMove,
+            gotoMainlineMove: gotoMainlineMove,
+            gotoBranchMove: gotoBranchMove,
             onBeginning: gotoBeginning,
             onEnd: gotoEnd,
             returnToMainline: returnToMainline,
           }}
           gameState={{
+            branches: branches,
             mainlineMoves: mainlineMoves,
             currentIndex: currentIndex,
             onMainLine: isOnMainLine,
+            currentBranchId: currentBranchId,
+            currentBranchIndex: currentBranchIndex,
           }}
           actions={{
             onImportPgn: importPgn,

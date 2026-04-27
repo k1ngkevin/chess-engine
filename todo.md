@@ -1,5 +1,3 @@
-~~- make the evaluation always in terms of white~~ <br>
-~~- make it evaluate in batches~~ <br>
 ~~- divide the analysis by 100 for each item~~ <br>
 ~~- bug: backend fails if one in chunk is null~~ <br>
 ~~- fix: when its already mate, make it return M0 or -M0.~~ <br>
@@ -9,13 +7,27 @@
 ~~- make a bar to show the evaluation~~<br>
 ~~- add checkmate sound effect~~ <br>
 ~~- prevent user from clicking the import button if its running~~ <br>
-~~- analyze + evaluate user moves when on branch~~
+~~- analyze + evaluate user moves when on branch~~ <br>
+~~- prevent from flickering 0.00 on eval bar when moving~~ <br>
+~~- make it so it evaluates and analyzes on user move (make new evaluate function for just 1 fen)~~ <br>
+~~- add sound effects to user move~~ <br>
+~~- be able to display the user move history on sidebar~~<br>
 
+### new bugs from branch reconfigure
+
+- show evaluation and analysis for branch moves
+- make the back arrow work on a branch
+- highlight the current move
+- make clicking a mainline move go to that move
+
+- add types to types.ts
 - better styling for the analysis
-- make it so it evaluates and analyzes on user move (make new evaluate function for just 1 fen)
-- be able to display the user move history on sidebar
 - add loading bar while its generating the analysis array
 - use docker container to run
 - add a notification for errors
 - have storage of the state on user refresh
-- prevent from flickering 0.00 on eval bar when moving
+- have a visual display of the branches
+- show follow up lines to the moves
+- add move classifications
+- flip board feature
+- add arrows for the best moves
