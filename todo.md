@@ -12,13 +12,13 @@
 ~~- make it so it evaluates and analyzes on user move (make new evaluate function for just 1 fen)~~ <br>
 ~~- add sound effects to user move~~ <br>
 ~~- be able to display the user move history on sidebar~~<br>
+~~- make clicking a mainline move go to that move~~<br>
 
 ### new bugs from branch reconfigure
 
 - show evaluation and analysis for branch moves
 - make the back arrow work on a branch
 - highlight the current move
-- make clicking a mainline move go to that move
 
 - add types to types.ts
 - better styling for the analysis

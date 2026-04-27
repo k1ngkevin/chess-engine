@@ -45,9 +45,6 @@ const EvaluationBar = ({
   const type = displayedEvaluation?.type ?? "cp";
   const value = displayedEvaluation?.value ?? 0;
   const whitePercent = convertEvalToPercent(type, value);
-  if (currentEvaluation != null) {
-    console.log(`current eval: ${currentEvaluation.value}`);
-  }
 
   return (
     <>

@@ -130,13 +130,13 @@ const Sidebar = ({
 
                   {row.map((move, moveIndex) => {
                     const currentMove = rowIndex * 2 + moveIndex;
-                    const fenIndex = currentIndex + 1;
+                    const fenIndex = currentMove + 1;
 
                     return (
                       <td key={currentMove}>
                         <button
                           className={`${styles.movesButton} 
-                        ${currentIndex === fenIndex ? styles.currentMove : ""}`}
+                        ${currentMove === fenIndex ? styles.currentMove : ""}`}
                           onClick={() => gotoMainlineMove(fenIndex)}
                         >
                           {move}
