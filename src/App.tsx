@@ -10,8 +10,6 @@ import {
   analyzeFenBatch,
   fetchFenEvaluation,
   evaluateFensBatch,
-  type EngineMove,
-  type EngineEvaluation,
 } from "./api";
 import captureSound from "./assets/capture.mp3";
 import castleSound from "./assets/castle.mp3";
@@ -19,6 +17,7 @@ import checkSound from "./assets/check.mp3";
 import moveSound from "./assets/move.mp3";
 import promoteSound from "./assets/promote.mp3";
 import checkmateSound from "./assets/checkmate.mp3";
+import { type EngineMove, type EngineEvaluation } from "./types";
 import "./App.css";
 
 const App = () => {

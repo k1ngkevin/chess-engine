@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { type EngineEvaluation } from "./api";
+import { type EngineEvaluation } from "./types.ts";
 import styles from "./EvaluationBar.module.css";
 
 interface EvaluationProps {
