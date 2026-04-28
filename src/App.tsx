@@ -166,7 +166,7 @@ const App = () => {
     if (!currentBranchId) return;
 
     if (currentBranchIndex > 0) {
-      gotoBranchMove(currentBranchId, currentBranchIndex + 1);
+      gotoBranchMove(currentBranchId, currentBranchIndex - 1);
       return;
     }
 

@@ -39,10 +39,14 @@
   width: 100%;
 }
 
+.currentMove {
+  background-color: #4a4a4a;
+}
+
 .movesButton {
   border: none;
   color: white;
-  background-color: #1c1c1c;
+  background: transparent;
   text-align: center;
   display: inline-block;
   font-size: 14px;
@@ -51,12 +55,17 @@
   width: 100%;
 }
 
-.currentMove {
+.movesButton:hover {
+  background-color: #2a2a2a;
+}
+
+.movesButton.currentMove {
   background-color: #4a4a4a;
 }
 
-.movesButton:hover {
-  background-color: #2a2a2a;
+.movesButton.currentMove:hover {
+  background-color: #4a4a4a;
+  color: black;
 }
 
 .movesNumber {
@@ -91,4 +100,13 @@
 .branchMoveButton:hover {
   background-color: #333;
   color: white;
+}
+
+.branchMoveButton.currentMove {
+  background-color: #4a4a4a;
+}
+
+.branchMoveButton.currentMove:hover {
+  background-color: #4a4a4a;
+  color: black;
 }

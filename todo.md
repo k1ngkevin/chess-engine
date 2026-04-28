@@ -13,20 +13,19 @@
 ~~- add sound effects to user move~~ <br>
 ~~- be able to display the user move history on sidebar~~<br>
 ~~- make clicking a mainline move go to that move~~<br>
+~~- highlight the current move~~ <br>
+~~- add types to types.ts~~ <br>
+~~- have a visual display of the branches~~ <br>
+~~- make the back arrow work on a branch~~ <br>
 
 ### new bugs from branch reconfigure
 
 - show evaluation and analysis for branch moves
-- make the back arrow work on a branch
-- highlight the current move
-
-- add types to types.ts
 - better styling for the analysis
 - add loading bar while its generating the analysis array
 - use docker container to run
 - add a notification for errors
 - have storage of the state on user refresh
-- have a visual display of the branches
 - show follow up lines to the moves
 - add move classifications
 - flip board feature

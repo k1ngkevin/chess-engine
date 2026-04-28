@@ -136,7 +136,7 @@ const Sidebar = ({
                       <td key={currentMove}>
                         <button
                           className={`${styles.movesButton} 
-                        ${currentIndex === fenIndex ? styles.currentMove : ""}`}
+                        ${onMainLine && currentIndex === fenIndex ? styles.currentMove : ""}`}
                           onClick={() => gotoMainlineMove(fenIndex)}
                         >
                           {move}
@@ -174,9 +174,9 @@ const Sidebar = ({
                                     ? styles.currentMove
                                     : ""
                                 }`}
-                                onClick={() =>
-                                  gotoBranchMove(branch.id, branchFenIndex)
-                                }
+                                onClick={() => {
+                                  gotoBranchMove(branch.id, branchFenIndex);
+                                }}
                               >
                                 {branchMove}
                               </button>
