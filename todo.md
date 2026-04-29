@@ -17,10 +17,10 @@
 ~~- add types to types.ts~~ <br>
 ~~- have a visual display of the branches~~ <br>
 ~~- make the back arrow work on a branch~~ <br>
-
-### new bugs from branch reconfigure
+~~- add number for move to the branches~~<br>
 
 - show evaluation and analysis for branch moves
+- evaluation graph
 - better styling for the analysis
 - add loading bar while its generating the analysis array
 - use docker container to run

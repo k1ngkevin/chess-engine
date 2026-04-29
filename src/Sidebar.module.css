@@ -110,3 +110,8 @@
   background-color: #4a4a4a;
   color: black;
 }
+
+.branchMovesNumber {
+  color: #999;
+  /* padding-right: 6px; */
+}

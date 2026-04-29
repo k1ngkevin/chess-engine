@@ -165,21 +165,28 @@ const Sidebar = ({
                             const branchFenIndex = branchMoveIndex + 1;
 
                             return (
-                              <button
-                                key={branchMoveIndex}
-                                className={`${styles.branchMoveButton} ${
-                                  !onMainLine &&
-                                  currentBranchId === branch.id &&
-                                  currentBranchIndex === branchFenIndex
-                                    ? styles.currentMove
-                                    : ""
-                                }`}
-                                onClick={() => {
-                                  gotoBranchMove(branch.id, branchFenIndex);
-                                }}
-                              >
-                                {branchMove}
-                              </button>
+                              <div>
+                                <span className={styles.branchMovesNumber}>
+                                  {branchMoveIndex % 2 === 0
+                                    ? `${rowIndex + 2 + branchMoveIndex / 2}. `
+                                    : ""}
+                                </span>
+                                <button
+                                  key={branchMoveIndex}
+                                  className={`${styles.branchMoveButton} ${
+                                    !onMainLine &&
+                                    currentBranchId === branch.id &&
+                                    currentBranchIndex === branchFenIndex
+                                      ? styles.currentMove
+                                      : ""
+                                  }`}
+                                  onClick={() => {
+                                    gotoBranchMove(branch.id, branchFenIndex);
+                                  }}
+                                >
+                                  {branchMove}
+                                </button>
+                              </div>
                             );
                           })}
                         </div>
