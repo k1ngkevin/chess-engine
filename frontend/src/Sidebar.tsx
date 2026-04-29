@@ -22,7 +22,7 @@ type SidebarProps = {
     branches: Branch[];
     mainlineMoves: string[];
     currentIndex: number;
-    onMainLine: boolean;
+    isOnMainline: boolean;
     currentBranchId: string | null;
     currentBranchIndex: number;
   };
@@ -51,7 +51,7 @@ const Sidebar = ({
     branches,
     mainlineMoves,
     currentIndex,
-    onMainLine,
+    isOnMainline,
     currentBranchId,
     currentBranchIndex,
   } = gameState;
@@ -136,7 +136,7 @@ const Sidebar = ({
                       <td key={currentMove}>
                         <button
                           className={`${styles.movesButton} 
-                        ${onMainLine && currentIndex === fenIndex ? styles.currentMove : ""}`}
+                        ${isOnMainline && currentIndex === fenIndex ? styles.currentMove : ""}`}
                           onClick={() => gotoMainlineMove(fenIndex)}
                         >
                           {move}
@@ -174,7 +174,7 @@ const Sidebar = ({
                                 <button
                                   key={branchMoveIndex}
                                   className={`${styles.branchMoveButton} ${
-                                    !onMainLine &&
+                                    !isOnMainline &&
                                     currentBranchId === branch.id &&
                                     currentBranchIndex === branchFenIndex
                                       ? styles.currentMove
@@ -199,7 +199,7 @@ const Sidebar = ({
           </tbody>
         </table>
       </div>
-      {!onMainLine && pgn.trim() !== "" && (
+      {!isOnMainline && pgn.trim() !== "" && (
         <button onClick={() => returnToMainline()}>return to mainline</button>
       )}
     </div>

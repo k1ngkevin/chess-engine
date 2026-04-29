@@ -1,23 +1,42 @@
-import { type EngineMove } from "./api";
+import { type EngineMove, type Branch } from "./types";
 interface AnalyzeProps {
+  branches: Branch[];
   bestMoves: (EngineMove[] | null)[];
   currentIndex: number;
+  isOnMainline: boolean;
+  currentBranchId: string | null;
+  currentBranchIndex: number;
   onAnalyze: () => Promise<string[] | void>;
 }
 
 const Analyze = ({
-  onAnalyze: onAnalyze,
-  currentIndex: currentIndex,
+  branches: branches,
   bestMoves: bestMoves,
+  currentIndex: currentIndex,
+  isOnMainline: isOnMainline,
+  currentBranchId: currentBranchId,
+  currentBranchIndex: currentBranchIndex,
+  onAnalyze: onAnalyze,
 }: AnalyzeProps) => {
+  const currentMainlineBestMoves = bestMoves[currentIndex];
+  const currentBranch = currentBranchId
+    ? branches.find((branch) => branch.id === currentBranchId)
+    : null;
+  const currentBranchBestMoves =
+    currentBranch?.bestMoves[currentBranchIndex - 1] ?? null;
+
+  const currentBestMoves = isOnMainline
+    ? currentMainlineBestMoves
+    : currentBranchBestMoves;
+
   return (
     <>
       {/* <button onClick={() => onAnalyze()}>Analyze</button> */}
       <p style={{ color: "white" }}>
-        {bestMoves[currentIndex]?.map((move) => move.san).join(" ") ?? null}
+        {currentBestMoves?.map((move) => move.san).join(" ") ?? null}
       </p>
       <p style={{ color: "white" }}>
-        {bestMoves[currentIndex]
+        {currentBestMoves
           ?.map((move) =>
             move.mate !== null
               ? `M${move.mate}`

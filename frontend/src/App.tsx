@@ -31,7 +31,7 @@ const App = () => {
 
   const [branches, setBranches] = useState<Branch[]>([]);
 
-  const [isOnMainLine, setIsOnMainLine] = useState(true);
+  const [isOnMainline, setIsOnMainline] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentBranchId, setCurrentBranchId] = useState<string | null>(null);
   const [currentBranchIndex, setCurrentBranchIndex] = useState<number>(-1);
@@ -99,11 +99,11 @@ const App = () => {
     setCurrentIndex(0);
     setCurrentFen(mainlineFens[0]);
 
-    if (!isOnMainLine) {
+    if (!isOnMainline) {
       setCurrentBranchIndex(-1);
       setCurrentBranchId(null);
     }
-    setIsOnMainLine(true);
+    setIsOnMainline(true);
   }
 
   function gotoEnd() {
@@ -112,17 +112,17 @@ const App = () => {
     setCurrentFen(mainlineFens[lastIndex]);
     playSound(mainlineMoves[lastIndex - 1]);
 
-    if (!isOnMainLine) {
+    if (!isOnMainline) {
       setCurrentBranchIndex(-1);
       setCurrentBranchId(null);
     }
-    setIsOnMainLine(true);
+    setIsOnMainline(true);
   }
 
   function gotoMainlineMove(move: number) {
     if (move < 0 || move >= mainlineFens.length) return;
 
-    setIsOnMainLine(true);
+    setIsOnMainline(true);
     setCurrentBranchId(null);
     setCurrentBranchIndex(-1);
 
@@ -138,7 +138,7 @@ const App = () => {
     if (!branch) return;
     if (move < 0 || move >= branch.fens.length) return;
 
-    setIsOnMainLine(false);
+    setIsOnMainline(false);
     setCurrentBranchId(branchId);
     setCurrentBranchIndex(move);
     setCurrentFen(branch.fens[move]);
@@ -149,7 +149,7 @@ const App = () => {
   }
 
   function nextMove() {
-    if (isOnMainLine) {
+    if (isOnMainline) {
       gotoMainlineMove(currentIndex + 1);
       return;
     }
@@ -158,7 +158,7 @@ const App = () => {
   }
 
   function prevMove() {
-    if (isOnMainLine) {
+    if (isOnMainline) {
       gotoMainlineMove(currentIndex - 1);
       return;
     }
@@ -380,7 +380,7 @@ const App = () => {
     try {
       const move = game.move({ from, to, promotion: "q" });
       const isAtEndOfMainline = currentIndex === mainlineFens.length - 1;
-      if (isOnMainLine && isAtEndOfMainline) {
+      if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
         setMainlineMoves((prev) => [...prev, move.san]);
         setMainlineFens((prev) => [...prev, game.fen()]);
@@ -390,14 +390,14 @@ const App = () => {
 
         setCurrentBranchId(null);
         setCurrentBranchIndex(-1);
-        setIsOnMainLine(true);
+        setIsOnMainline(true);
 
         playSound(move.san);
         void analyzeUserMove(game.fen(), nextIndex);
         return true;
       }
 
-      if (isOnMainLine) {
+      if (isOnMainline) {
         const branchId = crypto.randomUUID();
         const newBranch: Branch = {
           id: branchId,
@@ -413,7 +413,7 @@ const App = () => {
         setCurrentBranchId(branchId);
         setCurrentBranchIndex(1);
         setCurrentFen(game.fen());
-        setIsOnMainLine(false);
+        setIsOnMainline(false);
 
         playSound(move.san);
         void analyzeBranchMove(branchId, game.fen(), 0);
@@ -440,7 +440,7 @@ const App = () => {
       );
       setCurrentBranchIndex(nextFenIndex);
       setCurrentFen(game.fen());
-      setIsOnMainLine(false);
+      setIsOnMainline(false);
 
       playSound(move.san);
       void analyzeBranchMove(currentBranchId, game.fen(), nextMoveIndex);
@@ -564,7 +564,7 @@ const App = () => {
           currentIndex={currentIndex}
           currentBranchIndex={currentBranchIndex}
           currentBranchId={currentBranchId}
-          isOnMainline={isOnMainLine}
+          isOnMainline={isOnMainline}
           playedMovesEvaluation={playedMovesEval}
         />
         <ChessboardPanel
@@ -598,7 +598,7 @@ const App = () => {
             branches: branches,
             mainlineMoves: mainlineMoves,
             currentIndex: currentIndex,
-            onMainLine: isOnMainLine,
+            isOnMainline: isOnMainline,
             currentBranchId: currentBranchId,
             currentBranchIndex: currentBranchIndex,
           }}
@@ -607,9 +607,13 @@ const App = () => {
           }}
         />
         <Analyze
+          branches={branches}
           bestMoves={bestMovesArr}
           currentIndex={currentIndex}
           onAnalyze={handleAnalyze}
+          isOnMainline={isOnMainline}
+          currentBranchId={currentBranchId}
+          currentBranchIndex={currentBranchIndex}
         />
       </div>
     </div>
