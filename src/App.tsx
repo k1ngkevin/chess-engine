@@ -560,7 +560,11 @@ const App = () => {
     <div className="container">
       <div className="boardContainer">
         <EvaluationBar
+          branches={branches}
           currentIndex={currentIndex}
+          currentBranchIndex={currentBranchIndex}
+          currentBranchId={currentBranchId}
+          isOnMainline={isOnMainLine}
           playedMovesEvaluation={playedMovesEval}
         />
         <ChessboardPanel

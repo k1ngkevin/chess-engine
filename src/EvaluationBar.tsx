@@ -1,18 +1,36 @@
 import { useEffect, useRef } from "react";
-import { type EngineEvaluation } from "./types.ts";
+import { type EngineEvaluation, type Branch } from "./types.ts";
 import styles from "./EvaluationBar.module.css";
 
 interface EvaluationProps {
+  branches: Branch[];
   currentIndex: number;
+  currentBranchIndex: number;
+  currentBranchId: string | null;
+  isOnMainline: boolean;
   playedMovesEvaluation: (EngineEvaluation | null)[];
 }
 
 const EvaluationBar = ({
+  branches,
   currentIndex,
+  currentBranchIndex,
+  currentBranchId,
+  isOnMainline,
   playedMovesEvaluation,
 }: EvaluationProps) => {
   const previousEvaluationRef = useRef<EngineEvaluation | null>(null);
-  const currentEvaluation = playedMovesEvaluation[currentIndex];
+  const currentMainlineEvaluation = playedMovesEvaluation[currentIndex] ?? null;
+
+  const currentBranch = currentBranchId
+    ? branches.find((branch) => branch.id === currentBranchId)
+    : null;
+  const currentBranchEvaluation =
+    currentBranch?.evaluations[currentBranchIndex - 1] ?? null;
+
+  const currentEvaluation = isOnMainline
+    ? currentMainlineEvaluation
+    : currentBranchEvaluation;
 
   useEffect(() => {
     if (currentEvaluation != null) {
