@@ -1,7 +1,7 @@
-import { useMemo } from "react";
 import React from "react";
 import styles from "./Sidebar.module.css";
 import { type Branch } from "./types.ts";
+import MovesList from "./MovesList.tsx";
 
 type SidebarProps = {
   pgnState: {
@@ -58,21 +58,6 @@ const Sidebar = ({
 
   const { onImportPgn } = actions;
 
-  const rows = [];
-  for (let i = 0; i < mainlineMoves.length; i += 2) {
-    rows.push(mainlineMoves.slice(i, i + 2));
-  }
-
-  const branchesByStartIndex = useMemo(() => {
-    return branches.reduce<Record<number, Branch[]>>((acc, branch) => {
-      if (!acc[branch.startIndex]) {
-        acc[branch.startIndex] = [];
-      }
-      acc[branch.startIndex].push(branch);
-      return acc;
-    }, {});
-  }, [branches]);
-
   return (
     <div className={styles.sidebarContainer}>
       <>
@@ -83,125 +68,29 @@ const Sidebar = ({
           onChange={(e) => setPgn(e.target.value)}
           placeholder="Paste PGN contents"
         ></textarea>
-        {/* add a popup when the pgn was imported */}
         <button type="button" onClick={() => onImportPgn(pgn)}>
           {isImporting ? "Importing..." : "Import PGN"}
         </button>
       </>
-      <div className={styles.arrowButtonGroup}>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          onClick={() => onBeginning()}
-        >
-          {"<<"}
-        </button>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          style={{ padding: "10px 28px" }}
-          onClick={() => onPrevMove()}
-        >
-          {"<"}
-        </button>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          style={{ padding: "10px 28px" }}
-          onClick={() => onNextMove()}
-        >
-          {">"}
-        </button>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          onClick={() => onEnd()}
-        >
-          {">>"}
-        </button>
-      </div>
-      <div className={styles.movesContainer}>
-        <table className={styles.movesTable}>
-          <tbody>
-            {rows.map((row, rowIndex) => (
-              <React.Fragment key={rowIndex}>
-                <tr>
-                  <td className={styles.movesNumber}>{rowIndex + 1}</td>
-
-                  {row.map((move, moveIndex) => {
-                    const currentMove = rowIndex * 2 + moveIndex;
-                    const fenIndex = currentMove + 1;
-
-                    return (
-                      <td key={currentMove}>
-                        <button
-                          className={`${styles.movesButton} 
-                        ${isOnMainline && currentIndex === fenIndex ? styles.currentMove : ""}`}
-                          onClick={() => gotoMainlineMove(fenIndex)}
-                        >
-                          {move}
-                        </button>
-                      </td>
-                    );
-                  })}
-                  {row.length === 1 && <td key={`empty-${rowIndex}`} />}
-                </tr>
-
-                {row.map((_, moveIndex) => {
-                  const currentMove = rowIndex * 2 + moveIndex;
-                  const fenIndex = currentMove + 1;
-                  const branchesAfterThisMove =
-                    branchesByStartIndex[fenIndex] ?? [];
-
-                  if (branchesAfterThisMove.length === 0) return null;
-
-                  return branchesAfterThisMove.map((branch) => (
-                    <tr key={branch.id} className={styles.branchRow}>
-                      <td />
-
-                      <td colSpan={2}>
-                        <div className={styles.branchLine}>
-                          {branch.moves.map((branchMove, branchMoveIndex) => {
-                            const branchFenIndex = branchMoveIndex + 1;
-
-                            return (
-                              <div>
-                                <span className={styles.branchMovesNumber}>
-                                  {branchMoveIndex % 2 === 0
-                                    ? `${rowIndex + 2 + branchMoveIndex / 2}. `
-                                    : ""}
-                                </span>
-                                <button
-                                  key={branchMoveIndex}
-                                  className={`${styles.branchMoveButton} ${
-                                    !isOnMainline &&
-                                    currentBranchId === branch.id &&
-                                    currentBranchIndex === branchFenIndex
-                                      ? styles.currentMove
-                                      : ""
-                                  }`}
-                                  onClick={() => {
-                                    gotoBranchMove(branch.id, branchFenIndex);
-                                  }}
-                                >
-                                  {branchMove}
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </td>
-                    </tr>
-                  ));
-                })}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {!isOnMainline && pgn.trim() !== "" && (
-        <button onClick={() => returnToMainline()}>return to mainline</button>
-      )}
+      <MovesList
+        navigation={{
+          onNextMove: onNextMove,
+          onPrevMove: onPrevMove,
+          gotoMainlineMove: gotoMainlineMove,
+          gotoBranchMove: gotoBranchMove,
+          onBeginning: onBeginning,
+          onEnd: onEnd,
+          returnToMainline: returnToMainline,
+        }}
+        gameState={{
+          branches: branches,
+          mainlineMoves: mainlineMoves,
+          currentIndex: currentIndex,
+          isOnMainline: isOnMainline,
+          currentBranchId: currentBranchId,
+          currentBranchIndex: currentBranchIndex,
+        }}
+      />
     </div>
   );
 };
