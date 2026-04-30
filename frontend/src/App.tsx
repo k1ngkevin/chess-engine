@@ -320,6 +320,7 @@ const App = () => {
     isImportingRef.current = true;
 
     try {
+      setBranches([]);
       getUsernameAndElo(pgn);
 
       const history = temp.history();

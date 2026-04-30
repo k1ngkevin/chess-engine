@@ -31,3 +31,5 @@
 - add move classifications
 - flip board feature
 - add arrows for the best moves
+- make the best moves clickable
+- add accuracy rating for each player and elo
