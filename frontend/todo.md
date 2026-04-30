@@ -18,12 +18,13 @@
 ~~- have a visual display of the branches~~ <br>
 ~~- make the back arrow work on a branch~~ <br>
 ~~- add number for move to the branches~~<br>
+~~- show evaluation and analysis for branch moves~~<br>
+~~- use docker container to run~~ <br>
 
-- show evaluation and analysis for branch moves
+- bug: saves previous branches on imports (on importPgn() clear branches arr)
 - evaluation graph
 - better styling for the analysis
 - add loading bar while its generating the analysis array
-- use docker container to run
 - add a notification for errors
 - have storage of the state on user refresh
 - show follow up lines to the moves

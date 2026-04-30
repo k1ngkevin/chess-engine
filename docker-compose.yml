@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: ./backend
+    container_name: chess-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - STOCKFISH_PATH=/usr/games/stockfish
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    container_name: chess-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend

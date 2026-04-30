@@ -1,3 +1,7 @@
+const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8000"
+
+console.log(`apiURL: ${apiUrl}`)
+
 import {
   type EngineEvaluation,
   type AnalyzeResponse,
@@ -9,7 +13,7 @@ export async function analyzePosition(
   depth = 15,
   numResults = 3,
 ): Promise<AnalyzeResponse> {
-  const response = await fetch("http://127.0.0.1:8000/analyze", {
+  const response = await fetch(`${apiUrl}/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ fen, depth, num_results: numResults }),
@@ -27,7 +31,7 @@ export async function analyzeFenBatch(
   depth = 15,
   numResults = 3,
 ): Promise<AnalyzeBatchResponse> {
-  const response = await fetch("http://127.0.0.1:8000/batch-analyze", {
+  const response = await fetch(`${apiUrl}/batch-analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ fens, depth, num_results: numResults }),
@@ -44,7 +48,7 @@ export async function fetchFenEvaluation(
   fen: string,
   depth = 15,
 ): Promise<EngineEvaluation> {
-  const response = await fetch("http://127.0.0.1:8000/evaluate", {
+  const response = await fetch(`${apiUrl}/evaluate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ fen, depth }),
@@ -61,7 +65,7 @@ export async function evaluateFensBatch(
   fens: string[],
   depth = 15,
 ): Promise<EvaluateBatchResponse> {
-  const response = await fetch("http://127.0.0.1:8000/evaluate-moves", {
+  const response = await fetch(`${apiUrl}/evaluate-moves`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ fens, depth }),
