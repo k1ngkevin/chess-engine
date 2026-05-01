@@ -1,6 +1,8 @@
 .movesListContainer {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  gap: 12px;
 }
 
 .arrowButtonGroup {
@@ -8,6 +10,7 @@
   gap: 18px;
   justify-content: center;
   margin-top: 10px;
+  width: 100%;
 }
 
 .arrowButton {
@@ -17,6 +20,7 @@
   display: inline-block;
   font-size: 18px;
   padding: 10px 18px;
+  flex: 1;
 }
 
 .arrowButton:hover {
@@ -24,6 +28,7 @@
 }
 
 .movesContainer {
+  width: 100%;
   background: #181818;
   width: 400px;
   max-height: 500px;

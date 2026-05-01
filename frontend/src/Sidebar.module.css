@@ -1,7 +1,44 @@
 .sidebarContainer {
   display: flex;
   flex-direction: column;
-  /* background-color: #262626; */
+  align-items: center;
   background-color: #2a2a2a;
   border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 8px;
+
+  width: 20%;
+
+  border: none;
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 18px;
+
+  margin-bottom: 20px;
+  margin-left: 10px;
+  margin-top: 10px;
+
+  background-color: #333333;
+  color: #f3f4f6;
+  border: 1px solid #454545;
+}
+
+.backButton:hover {
+  background-color: #404040;
+}
+
+.analyzeWrapper,
+.movesListWrapper {
+  width: 90%;
+  display: flex;
 }

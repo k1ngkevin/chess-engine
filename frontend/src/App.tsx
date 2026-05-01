@@ -578,7 +578,7 @@ const App = () => {
           }}
         />
       </div>
-      <div>
+      <div className="sidebarWrapper">
         <Sidebar
           pgnState={{
             pgn,

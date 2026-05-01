@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./Sidebar.module.css";
 import { type Branch, type EngineMove } from "./types.ts";
 import MovesList from "./MovesList.tsx";
 import Analyze from "./Analyze.tsx";
+import PgnImportForm from "./PgnImportForm.tsx";
+import { IconArrowLeft } from "@tabler/icons-react";
 
 type SidebarProps = {
   pgnState: {
@@ -29,7 +31,7 @@ type SidebarProps = {
     currentBranchIndex: number;
   };
   actions: {
-    onImportPgn: (pgn: string) => void;
+    onImportPgn: (pgn: string) => Promise<void>;
   };
 };
 
@@ -59,49 +61,68 @@ const Sidebar = ({
     currentBranchIndex,
   } = gameState;
 
+  const [sidebarView, setSidebarView] = useState<"import" | "analysis">(
+    "import",
+  );
+
   const { onImportPgn } = actions;
 
   return (
     <div className={styles.sidebarContainer}>
-      <>
-        <textarea
-          value={pgn}
-          rows={10}
-          cols={50}
-          onChange={(e) => setPgn(e.target.value)}
-          placeholder="Paste PGN contents"
-        ></textarea>
-        <button type="button" onClick={() => onImportPgn(pgn)}>
-          {isImporting ? "Importing..." : "Import PGN"}
+      {sidebarView === "analysis" && (
+        <button
+          className={styles.backButton}
+          onClick={() => setSidebarView("import")}
+        >
+          <IconArrowLeft stroke={1.75} />
         </button>
-      </>
-      <Analyze
-        branches={branches}
-        bestMoves={bestMoves}
-        currentIndex={currentIndex}
-        isOnMainline={isOnMainline}
-        currentBranchId={currentBranchId}
-        currentBranchIndex={currentBranchIndex}
-      />
-      <MovesList
-        navigation={{
-          onNextMove: onNextMove,
-          onPrevMove: onPrevMove,
-          gotoMainlineMove: gotoMainlineMove,
-          gotoBranchMove: gotoBranchMove,
-          onBeginning: onBeginning,
-          onEnd: onEnd,
-          returnToMainline: returnToMainline,
-        }}
-        gameState={{
-          branches: branches,
-          mainlineMoves: mainlineMoves,
-          currentIndex: currentIndex,
-          isOnMainline: isOnMainline,
-          currentBranchId: currentBranchId,
-          currentBranchIndex: currentBranchIndex,
-        }}
-      />
+      )}
+      {sidebarView === "import" && (
+        <PgnImportForm
+          pgn={pgn}
+          setPgn={setPgn}
+          isImporting={isImporting}
+          onImportPgn={async () => {
+            await onImportPgn(pgn);
+            setSidebarView("analysis");
+          }}
+        />
+      )}
+      {sidebarView === "analysis" && (
+        <div className={styles.analyzeWrapper}>
+          <Analyze
+            branches={branches}
+            bestMoves={bestMoves}
+            currentIndex={currentIndex}
+            isOnMainline={isOnMainline}
+            currentBranchId={currentBranchId}
+            currentBranchIndex={currentBranchIndex}
+          />
+        </div>
+      )}
+      {sidebarView === "analysis" && (
+        <div className={styles.movesListWrapper}>
+          <MovesList
+            navigation={{
+              onNextMove: onNextMove,
+              onPrevMove: onPrevMove,
+              gotoMainlineMove: gotoMainlineMove,
+              gotoBranchMove: gotoBranchMove,
+              onBeginning: onBeginning,
+              onEnd: onEnd,
+              returnToMainline: returnToMainline,
+            }}
+            gameState={{
+              branches: branches,
+              mainlineMoves: mainlineMoves,
+              currentIndex: currentIndex,
+              isOnMainline: isOnMainline,
+              currentBranchId: currentBranchId,
+              currentBranchIndex: currentBranchIndex,
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

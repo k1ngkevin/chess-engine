@@ -1,6 +1,7 @@
 .container {
   display: flex;
   flex-direction: row;
+  align-items: stretch;
   gap: 2vw;
   margin-top: 5vw;
 }
@@ -21,4 +22,12 @@
   gap: 20px;
 }
 
-/* change to App.module.css */
+.sidebarWrapper {
+  display: flex;
+  align-self: stretch;
+  width: clamp(350px, 28vw, 450px);
+}
+
+.sidebarWrapper > * {
+  height: 100%;
+}

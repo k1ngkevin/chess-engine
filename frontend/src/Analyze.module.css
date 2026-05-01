@@ -1,8 +1,8 @@
 .analysisContainer {
   display: flex;
   flex-direction: column;
-  /* gap: 12px; */
   margin: 10px;
+  width: 100%;
 }
 
 .analysisItem {
