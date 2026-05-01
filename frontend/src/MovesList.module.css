@@ -1,0 +1,123 @@
+.movesListContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+}
+
+.arrowButtonGroup {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.arrowButton {
+  border: none;
+  background-color: white;
+  text-align: center;
+  display: inline-block;
+  font-size: 18px;
+  padding: 10px 18px;
+  flex: 1;
+}
+
+.arrowButton:hover {
+  background-color: #2563eb;
+}
+
+.movesContainer {
+  width: 100%;
+  background: #181818;
+  width: 400px;
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid #444444;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-top: 18px;
+}
+
+.movesTable {
+  border-collapse: collapse;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.currentMove {
+  background-color: #4a4a4a;
+}
+
+.movesButton {
+  border: none;
+  color: white;
+  background: transparent;
+  text-align: center;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 6px 10px;
+  width: 100%;
+}
+
+.movesButton:hover {
+  background-color: #2a2a2a;
+}
+
+.movesButton.currentMove {
+  background-color: #4a4a4a;
+}
+
+.movesButton.currentMove:hover {
+  background-color: #4a4a4a;
+  color: black;
+}
+
+.movesNumber {
+  color: #999;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.branchRow td {
+  padding-top: 2px;
+  padding-bottom: 6px;
+}
+
+.branchLine {
+  margin-left: 16px;
+  padding-left: 10px;
+  border-left: 2px solid #555;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.branchMoveButton {
+  border: none;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.branchMoveButton:hover {
+  background-color: #333;
+  color: white;
+}
+
+.branchMoveButton.currentMove {
+  background-color: #4a4a4a;
+}
+
+.branchMoveButton.currentMove:hover {
+  background-color: #4a4a4a;
+  color: black;
+}
+
+.branchMovesNumber {
+  color: #999;
+}
+

@@ -1,117 +1,44 @@
 .sidebarContainer {
   display: flex;
   flex-direction: column;
-}
-
-.arrowButtonGroup {
-  display: flex;
-  gap: 18px;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.arrowButton {
-  border: none;
-  background-color: white;
-  text-align: center;
-  display: inline-block;
-  font-size: 18px;
-  padding: 10px 18px;
-}
-
-.arrowButton:hover {
-  background-color: #2563eb;
-}
-
-.movesContainer {
-  width: 400px;
-  max-height: 500px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 8px;
-  box-sizing: border-box;
-  margin-top: 18px;
-}
-
-.movesTable {
-  border-collapse: collapse;
-  margin-top: 8px;
-  width: 100%;
-}
-
-.currentMove {
-  background-color: #4a4a4a;
-}
-
-.movesButton {
-  border: none;
-  color: white;
-  background: transparent;
-  text-align: center;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 6px 10px;
-  width: 100%;
-}
-
-.movesButton:hover {
+  align-items: center;
   background-color: #2a2a2a;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
-.movesButton.currentMove {
-  background-color: #4a4a4a;
-}
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 8px;
 
-.movesButton.currentMove:hover {
-  background-color: #4a4a4a;
-  color: black;
-}
+  width: 20%;
 
-.movesNumber {
-  color: #999;
-  text-align: right;
-  padding-right: 10px;
-}
-
-.branchRow td {
-  padding-top: 2px;
-  padding-bottom: 6px;
-}
-
-.branchLine {
-  margin-left: 16px;
-  padding-left: 10px;
-  border-left: 2px solid #555;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.branchMoveButton {
   border: none;
-  background: transparent;
-  color: #aaa;
+  border-radius: 6px;
+  padding: 10px 12px;
   cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
+  font-size: 18px;
+
+  margin-bottom: 20px;
+  margin-left: 10px;
+  margin-top: 10px;
+
+  background-color: #333333;
+  color: #f3f4f6;
+  border: 1px solid #454545;
 }
 
-.branchMoveButton:hover {
-  background-color: #333;
-  color: white;
+.backButton:hover {
+  background-color: #404040;
 }
 
-.branchMoveButton.currentMove {
-  background-color: #4a4a4a;
-}
-
-.branchMoveButton.currentMove:hover {
-  background-color: #4a4a4a;
-  color: black;
-}
-
-.branchMovesNumber {
-  color: #999;
-  /* padding-right: 6px; */
+.analyzeWrapper,
+.movesListWrapper {
+  width: 90%;
+  display: flex;
 }

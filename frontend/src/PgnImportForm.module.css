@@ -1,0 +1,38 @@
+.pgnForm {
+  width: 90%;
+  display: inline-flex;
+  align-self: center;
+
+  background-color: #181818;
+  color: white;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.analyzePgnButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  gap: 8px;
+
+  width: 80%;
+
+  border: none;
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 18px;
+
+  background-color: #3a3a3a;
+  color: #f3f4f6;
+  border: 1px solid #4a4a4a;
+}
+
+.analyzePgnButton:hover { 
+  background-color: #444444;
+  border-color: #5a5a5a;
+}

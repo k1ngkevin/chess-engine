@@ -20,8 +20,8 @@
 ~~- add number for move to the branches~~<br>
 ~~- show evaluation and analysis for branch moves~~<br>
 ~~- use docker container to run~~ <br>
+~~- bug: saves previous branches on imports (on importPgn() clear branches arr)~~<br>
 
-- bug: saves previous branches on imports (on importPgn() clear branches arr)
 - evaluation graph
 - better styling for the analysis
 - add loading bar while its generating the analysis array
