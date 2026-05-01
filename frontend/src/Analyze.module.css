@@ -1,0 +1,34 @@
+.analysisContainer {
+  display: flex;
+  flex-direction: column;
+  /* gap: 12px; */
+  margin: 10px;
+}
+
+.analysisItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #444444;
+}
+
+.evaluationBlack {
+  color: white;
+  background: black;
+  margin-right: 8px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 18px;
+}
+
+.evaluationWhite {
+  color: black;
+  background: white;
+  margin-right: 8px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 18px;
+}
+
+.bestMove {
+  font-size: 18px;
+  color: white;
+}

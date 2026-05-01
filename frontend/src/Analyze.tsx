@@ -1,4 +1,5 @@
 import { type EngineMove, type Branch } from "./types";
+import styles from "./Analyze.module.css";
 interface AnalyzeProps {
   branches: Branch[];
   bestMoves: (EngineMove[] | null)[];
@@ -6,7 +7,6 @@ interface AnalyzeProps {
   isOnMainline: boolean;
   currentBranchId: string | null;
   currentBranchIndex: number;
-  onAnalyze: () => Promise<string[] | void>;
 }
 
 const Analyze = ({
@@ -16,7 +16,6 @@ const Analyze = ({
   isOnMainline: isOnMainline,
   currentBranchId: currentBranchId,
   currentBranchIndex: currentBranchIndex,
-  onAnalyze: onAnalyze,
 }: AnalyzeProps) => {
   const currentMainlineBestMoves = bestMoves[currentIndex];
   const currentBranch = currentBranchId
@@ -30,23 +29,29 @@ const Analyze = ({
     : currentBranchBestMoves;
 
   return (
-    <>
-      {/* <button onClick={() => onAnalyze()}>Analyze</button> */}
-      <p style={{ color: "white" }}>
-        {currentBestMoves?.map((move) => move.san).join(" ") ?? null}
-      </p>
-      <p style={{ color: "white" }}>
-        {currentBestMoves
-          ?.map((move) =>
-            move.mate !== null
-              ? `M${move.mate}`
-              : move.centipawn !== null
-                ? (move.centipawn / 100).toFixed(2)
-                : "",
-          )
-          .join(" ") ?? null}
-      </p>
-    </>
+    <div className={styles.analysisContainer}>
+      {currentBestMoves?.map((move, idx) => {
+        const whiteTurn =
+          (move.mate !== null && move.mate > 0) ||
+          (move.centipawn !== null && move.centipawn > 0);
+        return (
+          <div key={idx} className={styles.analysisItem}>
+            <span
+              className={
+                whiteTurn ? styles.evaluationWhite : styles.evaluationBlack
+              }
+            >
+              {move.mate !== null
+                ? `M${move.mate}`
+                : move.centipawn !== null
+                  ? `${move.centipawn / 100 > 0 ? "+" : ""}${(move.centipawn / 100).toFixed(2)}`
+                  : ""}
+            </span>
+            <span className={styles.bestMove}>{move.san}</span>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 

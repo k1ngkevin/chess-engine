@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "./Sidebar.module.css";
-import { type Branch } from "./types.ts";
+import { type Branch, type EngineMove } from "./types.ts";
 import MovesList from "./MovesList.tsx";
+import Analyze from "./Analyze.tsx";
 
 type SidebarProps = {
   pgnState: {
@@ -20,6 +21,7 @@ type SidebarProps = {
   };
   gameState: {
     branches: Branch[];
+    bestMoves: (EngineMove[] | null)[];
     mainlineMoves: string[];
     currentIndex: number;
     isOnMainline: boolean;
@@ -49,6 +51,7 @@ const Sidebar = ({
   } = navigation;
   const {
     branches,
+    bestMoves,
     mainlineMoves,
     currentIndex,
     isOnMainline,
@@ -72,6 +75,14 @@ const Sidebar = ({
           {isImporting ? "Importing..." : "Import PGN"}
         </button>
       </>
+      <Analyze
+        branches={branches}
+        bestMoves={bestMoves}
+        currentIndex={currentIndex}
+        isOnMainline={isOnMainline}
+        currentBranchId={currentBranchId}
+        currentBranchIndex={currentBranchIndex}
+      />
       <MovesList
         navigation={{
           onNextMove: onNextMove,

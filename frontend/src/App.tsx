@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import ChessboardPanel from "./ChessboardPanel";
 import { Chess } from "chess.js";
 import Sidebar from "./Sidebar";
-import Analyze from "./Analyze";
 import EvaluationBar from "./EvaluationBar";
 import { type Branch } from "./types";
 import {
@@ -597,6 +596,7 @@ const App = () => {
           }}
           gameState={{
             branches: branches,
+            bestMoves: bestMovesArr,
             mainlineMoves: mainlineMoves,
             currentIndex: currentIndex,
             isOnMainline: isOnMainline,
@@ -606,15 +606,6 @@ const App = () => {
           actions={{
             onImportPgn: importPgn,
           }}
-        />
-        <Analyze
-          branches={branches}
-          bestMoves={bestMovesArr}
-          currentIndex={currentIndex}
-          onAnalyze={handleAnalyze}
-          isOnMainline={isOnMainline}
-          currentBranchId={currentBranchId}
-          currentBranchIndex={currentBranchIndex}
         />
       </div>
     </div>

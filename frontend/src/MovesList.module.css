@@ -24,10 +24,11 @@
 }
 
 .movesContainer {
+  background: #181818;
   width: 400px;
   max-height: 500px;
   overflow-y: auto;
-  border: 1px solid #ccc;
+  border: 1px solid #444444;
   padding: 8px;
   box-sizing: border-box;
   margin-top: 18px;
@@ -113,5 +114,5 @@
 
 .branchMovesNumber {
   color: #999;
-  /* padding-right: 6px; */
 }
+
