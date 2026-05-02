@@ -24,8 +24,8 @@
 ~~- better styling for the analysis~~ <br>
 ~~- clear data on back arrow~~<br>
 ~~- bring to analyze page once user makes a move~~<br>
+~~- when evaluating user move, make the best moves blank to prevent moving sidebar~~<br>
 
-- when evaluating user move, make the best moves blank to prevent moving sidebar
 - evaluation graph
 - add loading bar while its generating the analysis array
 - add a notification for errors
