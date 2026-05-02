@@ -3,6 +3,7 @@ export type EngineMove = {
   san: string;
   centipawn: number | null;
   mate: number | null;
+  line: string[]
 };
 
 export type EngineEvaluation = {
