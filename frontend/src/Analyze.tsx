@@ -29,7 +29,9 @@ const Analyze = ({
     : currentBranchBestMoves;
 
   const isLoading = currentBestMoves == null;
-
+  if (currentMainlineBestMoves != null) {
+    console.log(`line: ${currentMainlineBestMoves[0].line}`);
+  }
   return (
     <div className={styles.analysisContainer}>
       {isLoading ? (
@@ -64,6 +66,14 @@ const Analyze = ({
                     : ""}
               </span>
               <span className={styles.bestMove}>{move.san}</span>
+              {move.line != null
+                ? move.line?.slice(1).map((mv, idx) => (
+                    <span key={idx} className={styles.bestMove}>
+                      {" "}
+                      {mv}{" "}
+                    </span>
+                  ))
+                : ""}
             </div>
           );
         })

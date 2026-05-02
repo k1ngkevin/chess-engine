@@ -25,12 +25,14 @@
 ~~- clear data on back arrow~~<br>
 ~~- bring to analyze page once user makes a move~~<br>
 ~~- when evaluating user move, make the best moves blank to prevent moving sidebar~~<br>
+~~- show follow up lines to the moves~~<br>
 
+- make waiting bar for moves extend
+- bug: can't move from branch to mainline
 - evaluation graph
 - add loading bar while its generating the analysis array
 - add a notification for errors
 - have storage of the state on user refresh
-- show follow up lines to the moves
 - add move classifications
 - flip board feature
 - add arrows for the best moves
