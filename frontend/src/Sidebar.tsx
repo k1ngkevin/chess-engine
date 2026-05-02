@@ -11,6 +11,7 @@ type SidebarProps = {
     pgn: string;
     setPgn: React.Dispatch<React.SetStateAction<string>>;
     isImporting: boolean;
+    sidebarView: "import" | "analysis";
   };
   navigation: {
     onNextMove: () => void;
@@ -42,7 +43,7 @@ const Sidebar = ({
   gameState,
   actions,
 }: SidebarProps) => {
-  const { pgn, setPgn, isImporting } = pgnState;
+  const { pgn, setPgn, isImporting, sidebarView } = pgnState;
   const {
     onNextMove,
     onPrevMove,
@@ -62,22 +63,12 @@ const Sidebar = ({
     currentBranchIndex,
   } = gameState;
 
-  const [sidebarView, setSidebarView] = useState<"import" | "analysis">(
-    "import",
-  );
-
   const { onImportPgn, onBackButton } = actions;
 
   return (
     <div className={styles.sidebarContainer}>
       {sidebarView === "analysis" && (
-        <button
-          className={styles.backButton}
-          onClick={() => {
-            onBackButton();
-            setSidebarView("import");
-          }}
-        >
+        <button className={styles.backButton} onClick={() => onBackButton()}>
           <IconArrowLeft stroke={1.75} />
         </button>
       )}
@@ -86,10 +77,7 @@ const Sidebar = ({
           pgn={pgn}
           setPgn={setPgn}
           isImporting={isImporting}
-          onImportPgn={async () => {
-            await onImportPgn(pgn);
-            setSidebarView("analysis");
-          }}
+          onImportPgn={async () => await onImportPgn(pgn)}
         />
       )}
       {sidebarView === "analysis" && (

@@ -42,6 +42,9 @@ const App = () => {
   const [pgn, setPgn] = useState("");
   const [isImporting, setIsImporting] = useState(false);
   const isImportingRef = useRef(false);
+  const [sidebarView, setSidebarView] = useState<"import" | "analysis">(
+    "import",
+  );
 
   const [whiteUsername, setWhiteUsername] = useState("White");
   const [whiteElo, setWhiteElo] = useState<number>();
@@ -365,6 +368,7 @@ const App = () => {
       setMainlineFens(fens);
       setCurrentIndex(0);
       await analyzeAndEvaluateRemainingMoves(firstBranchSize, fens);
+      setSidebarView("analysis");
     } catch (error) {
       console.error("Import failed:", error);
     } finally {
@@ -378,6 +382,7 @@ const App = () => {
     try {
       const move = game.move({ from, to, promotion: "q" });
       const isAtEndOfMainline = currentIndex === mainlineFens.length - 1;
+      setSidebarView("analysis");
       if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
         setMainlineMoves((prev) => [...prev, move.san]);
@@ -565,6 +570,7 @@ const App = () => {
     setIsOnMainline(true);
     setCurrentBranchId(null);
     setCurrentBranchIndex(-1);
+    setSidebarView("import");
   }
 
   return (
@@ -592,9 +598,10 @@ const App = () => {
       <div className="sidebarWrapper">
         <Sidebar
           pgnState={{
-            pgn,
-            setPgn,
-            isImporting,
+            pgn: pgn,
+            setPgn: setPgn,
+            isImporting: isImporting,
+            sidebarView: sidebarView,
           }}
           navigation={{
             onNextMove: nextMove,

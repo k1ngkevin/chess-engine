@@ -23,7 +23,9 @@
 ~~- bug: saves previous branches on imports (on importPgn() clear branches arr)~~<br>
 ~~- better styling for the analysis~~ <br>
 ~~- clear data on back arrow~~<br>
+~~- bring to analyze page once user makes a move~~<br>
 
+- when evaluating user move, make the best moves blank to prevent moving sidebar
 - evaluation graph
 - add loading bar while its generating the analysis array
 - add a notification for errors
@@ -34,4 +36,3 @@
 - add arrows for the best moves
 - make the best moves clickable
 - add accuracy rating for each player and elo
-- bring to analyze page once user makes a move
