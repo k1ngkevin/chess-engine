@@ -21,9 +21,10 @@
 ~~- show evaluation and analysis for branch moves~~<br>
 ~~- use docker container to run~~ <br>
 ~~- bug: saves previous branches on imports (on importPgn() clear branches arr)~~<br>
+~~- better styling for the analysis~~ <br>
+~~- clear data on back arrow~~<br>
 
 - evaluation graph
-- better styling for the analysis
 - add loading bar while its generating the analysis array
 - add a notification for errors
 - have storage of the state on user refresh
@@ -33,3 +34,4 @@
 - add arrows for the best moves
 - make the best moves clickable
 - add accuracy rating for each player and elo
+- bring to analyze page once user makes a move

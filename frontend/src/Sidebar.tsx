@@ -32,6 +32,7 @@ type SidebarProps = {
   };
   actions: {
     onImportPgn: (pgn: string) => Promise<void>;
+    onBackButton: () => void;
   };
 };
 
@@ -65,14 +66,17 @@ const Sidebar = ({
     "import",
   );
 
-  const { onImportPgn } = actions;
+  const { onImportPgn, onBackButton } = actions;
 
   return (
     <div className={styles.sidebarContainer}>
       {sidebarView === "analysis" && (
         <button
           className={styles.backButton}
-          onClick={() => setSidebarView("import")}
+          onClick={() => {
+            onBackButton();
+            setSidebarView("import");
+          }}
         >
           <IconArrowLeft stroke={1.75} />
         </button>

@@ -24,9 +24,7 @@ const App = () => {
   const [mainlineFens, setMainlineFens] = useState<string[]>([
     new Chess().fen(),
   ]);
-  const [currentFen, setCurrentFen] = useState(
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-  );
+  const [currentFen, setCurrentFen] = useState(new Chess().fen());
 
   const [branches, setBranches] = useState<Branch[]>([]);
 
@@ -556,6 +554,19 @@ const App = () => {
     }
   }
 
+  function onBackButton() {
+    setMainlineMoves([]);
+    setMainlineFens([new Chess().fen()]);
+    setBestMovesArr([]);
+    setBranches([]);
+    setPlayedMovesEval([]);
+    setCurrentFen(new Chess().fen());
+    setCurrentIndex(0);
+    setIsOnMainline(true);
+    setCurrentBranchId(null);
+    setCurrentBranchIndex(-1);
+  }
+
   return (
     <div className="container">
       <div className="boardContainer">
@@ -605,6 +616,7 @@ const App = () => {
           }}
           actions={{
             onImportPgn: importPgn,
+            onBackButton: onBackButton,
           }}
         />
       </div>

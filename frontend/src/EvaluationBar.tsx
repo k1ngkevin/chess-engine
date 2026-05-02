@@ -20,6 +20,12 @@ const EvaluationBar = ({
   playedMovesEvaluation,
 }: EvaluationProps) => {
   const previousEvaluationRef = useRef<EngineEvaluation | null>(null);
+  useEffect(() => {
+    if (playedMovesEvaluation.length === 0) {
+      previousEvaluationRef.current = null;
+    }
+  }, [playedMovesEvaluation.length]);
+
   const currentMainlineEvaluation = playedMovesEvaluation[currentIndex] ?? null;
 
   const currentBranch = currentBranchId
@@ -42,7 +48,7 @@ const EvaluationBar = ({
     type: string,
     evaluation: number,
   ): number | undefined {
-    if (!type || !evaluation) return;
+    if (!type || evaluation == null) return;
 
     if (type === "mate_over") {
       return evaluation === 1 ? 100 : 0;
@@ -57,8 +63,16 @@ const EvaluationBar = ({
     return 50 + (tempEval / maxEval) * 50;
   }
 
-  const displayedEvaluation =
-    currentEvaluation ?? previousEvaluationRef.current;
+  const isResetPosition =
+    currentIndex === 0 &&
+    isOnMainline &&
+    currentBranchId === null &&
+    currentBranchIndex === -1 &&
+    playedMovesEvaluation.length === 0;
+
+  const displayedEvaluation = isResetPosition
+    ? null
+    : (currentEvaluation ?? previousEvaluationRef.current);
 
   const type = displayedEvaluation?.type ?? "cp";
   const value = displayedEvaluation?.value ?? 0;
