@@ -67,8 +67,11 @@ const Analyze = ({
               </span>
               <span className={styles.bestMove}>{move.san}</span>
               {move.line != null
-                ? move.line.map((mv) => (
-                    <span className={styles.bestMove}> {mv} </span>
+                ? move.line?.slice(1).map((mv, idx) => (
+                    <span key={idx} className={styles.bestMove}>
+                      {" "}
+                      {mv}{" "}
+                    </span>
                   ))
                 : ""}
             </div>
