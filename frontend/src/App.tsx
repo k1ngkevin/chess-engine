@@ -587,6 +587,12 @@ const App = () => {
         <ChessboardPanel
           fen={currentFen}
           onUserMove={handleUserMove}
+          branches={branches}
+          bestMoves={bestMovesArr}
+          currentIndex={currentIndex}
+          isOnMainline={isOnMainline}
+          currentBranchId={currentBranchId}
+          currentBranchIndex={currentBranchIndex}
           playerInfo={{
             whiteUsername: whiteUsername,
             blackUsername: blackUsername,

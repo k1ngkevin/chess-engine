@@ -29,9 +29,7 @@ const Analyze = ({
     : currentBranchBestMoves;
 
   const isLoading = currentBestMoves == null;
-  if (currentMainlineBestMoves != null) {
-    console.log(`line: ${currentMainlineBestMoves[0].line}`);
-  }
+
   return (
     <div className={styles.analysisContainer}>
       {isLoading ? (

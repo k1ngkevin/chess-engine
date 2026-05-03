@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-from stockfish import Stockfish
 import chess
 import chess.engine
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./ChessboardPanel.module.css";
 import { Chess, type Square } from "chess.js";
 import {
@@ -7,9 +7,17 @@ import {
   type SquareHandlerArgs,
 } from "react-chessboard";
 
-type Props = {
+import { type Branch, type EngineMove, type Arrow } from "./types";
+
+type ChessboardProps = {
   fen: string;
   onUserMove: (from: string, to: string) => boolean;
+  branches: Branch[];
+  bestMoves: (EngineMove[] | null)[];
+  currentIndex: number;
+  isOnMainline: boolean;
+  currentBranchId: string | null;
+  currentBranchIndex: number;
   playerInfo: {
     whiteUsername: string;
     blackUsername: string;
@@ -18,11 +26,58 @@ type Props = {
   };
 };
 
-function ChessboardPanel({ fen, onUserMove, playerInfo }: Props) {
+function ChessboardPanel({
+  fen,
+  onUserMove,
+  branches,
+  bestMoves,
+  currentIndex,
+  isOnMainline,
+  currentBranchId,
+  currentBranchIndex,
+  playerInfo,
+}: ChessboardProps) {
   const { whiteUsername, blackUsername, whiteElo, blackElo } = playerInfo;
   const chessGame = fen ? new Chess(fen) : new Chess();
   const [moveFrom, setMoveFrom] = useState("");
   const [optionSquares, setOptionSquares] = useState({});
+  const [arrows, setArrows] = useState<Arrow[]>([]);
+
+  useEffect(() => {
+    const currentMainlineBestMoves = bestMoves[currentIndex];
+    const currentBranch = currentBranchId
+      ? branches.find((branch) => branch.id === currentBranchId)
+      : null;
+    const currentBranchBestMoves =
+      currentBranch?.bestMoves[currentBranchIndex - 1] ?? null;
+
+    const currentBestMoves = isOnMainline
+      ? currentMainlineBestMoves
+      : currentBranchBestMoves;
+    if (currentBestMoves == null) return;
+    const newArrows = currentBestMoves
+      .slice(0, 3)
+      .map((move) => {
+        const bestMoveUci = move.uci;
+        if (bestMoveUci.length < 4) return undefined;
+
+        return {
+          startSquare: bestMoveUci.slice(0, 2),
+          endSquare: bestMoveUci.slice(2, 4),
+          color: "#4caf50",
+        };
+      })
+      .filter((arrow): arrow is Arrow => arrow !== undefined);
+
+    setArrows(newArrows);
+  }, [
+    branches,
+    bestMoves,
+    currentIndex,
+    isOnMainline,
+    currentBranchId,
+    currentBranchIndex,
+  ]);
 
   function gameOver(): string | void {
     if (chessGame.isStalemate()) {
@@ -111,9 +166,24 @@ function ChessboardPanel({ fen, onUserMove, playerInfo }: Props) {
     return false;
   }
 
+  const arrowOptions = {
+    color: "#4caf50",
+    secondaryColor: "#4caf50",
+    tertiaryColor: "#4caf50",
+    arrowLengthReducerDenominator: 8,
+    sameTargetArrowLengthReducerDenominator: 4,
+    arrowWidthDenominator: 5,
+    activeArrowWidthMultiplier: 0.9,
+    activeOpacity: 0.5,
+    arrowStartOffset: 0,
+    opacity: 1,
+  };
+
   const chessboardOptions = {
     onPieceDrop,
     onSquareClick,
+    arrowOptions,
+    arrows,
     position: fen,
     squareStyles: optionSquares,
     id: "click-or-drag-to-move",

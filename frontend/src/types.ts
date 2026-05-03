@@ -32,3 +32,9 @@ export type Branch = {
   evaluations: (EngineEvaluation | null)[];
   bestMoves: (EngineMove[] | null)[];
 };
+
+export type Arrow = {
+  startSquare: string;
+  endSquare: string;
+  color: string;
+}
