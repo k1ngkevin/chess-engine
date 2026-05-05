@@ -41,7 +41,7 @@ function ChessboardPanel({
   const chessGame = fen ? new Chess(fen) : new Chess();
   const [moveFrom, setMoveFrom] = useState("");
   const [optionSquares, setOptionSquares] = useState({});
-  const [arrows, setArrows] = useState<Arrow[]>([]);
+  const [engineArrows, setEngineArrows] = useState<Arrow[]>([]);
 
   useEffect(() => {
     const currentMainlineBestMoves = bestMoves[currentIndex];
@@ -57,19 +57,20 @@ function ChessboardPanel({
     if (currentBestMoves == null) return;
     const newArrows = currentBestMoves
       .slice(0, 3)
-      .map((move) => {
+      .map((move, idx) => {
         const bestMoveUci = move.uci;
         if (bestMoveUci.length < 4) return undefined;
+        const opacities = [1, 0.65, 0.25];
 
         return {
           startSquare: bestMoveUci.slice(0, 2),
           endSquare: bestMoveUci.slice(2, 4),
-          color: "#4caf50",
+          color: `rgba(76, 175, 80, ${opacities[idx]})`,
         };
       })
       .filter((arrow): arrow is Arrow => arrow !== undefined);
 
-    setArrows(newArrows);
+    setEngineArrows(newArrows);
   }, [
     branches,
     bestMoves,
@@ -167,12 +168,12 @@ function ChessboardPanel({
   }
 
   const arrowOptions = {
-    color: "#4caf50",
+    color: "#ffaa00",
     secondaryColor: "#4caf50",
     tertiaryColor: "#4caf50",
     arrowLengthReducerDenominator: 8,
     sameTargetArrowLengthReducerDenominator: 4,
-    arrowWidthDenominator: 5,
+    arrowWidthDenominator: 7,
     activeArrowWidthMultiplier: 0.9,
     activeOpacity: 0.5,
     arrowStartOffset: 0,
@@ -183,7 +184,7 @@ function ChessboardPanel({
     onPieceDrop,
     onSquareClick,
     arrowOptions,
-    arrows,
+    arrows: engineArrows,
     position: fen,
     squareStyles: optionSquares,
     id: "click-or-drag-to-move",

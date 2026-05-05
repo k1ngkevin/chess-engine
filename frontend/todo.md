@@ -26,8 +26,9 @@
 ~~- bring to analyze page once user makes a move~~<br>
 ~~- when evaluating user move, make the best moves blank to prevent moving sidebar~~<br>
 ~~- show follow up lines to the moves~~<br>
-
-- ~~add arrows for the best moves~~<br>
+~~- make arrows different opacity~~<br>
+~~- add arrows for the best moves~~<br>
+~~- make user arrow orange~~<br>
 
 - make waiting bar for moves extend
 - bug: can't move from branch to mainline
@@ -39,5 +40,3 @@
 - flip board feature
 - make the best moves clickable
 - add accuracy rating for each player and elo
-- make arrows differe opacity
-- make user arrow orange
