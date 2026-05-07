@@ -165,7 +165,7 @@ const App = () => {
 
     if (!currentBranchId) return;
 
-    if (currentBranchIndex > 0) {
+    if (currentBranchIndex > 1) {
       gotoBranchMove(currentBranchId, currentBranchIndex - 1);
       return;
     }
@@ -257,9 +257,6 @@ const App = () => {
     try {
       for (let i = startIndex; i < fens.length; i += chunkSize) {
         const chunk = fens.slice(i, i + chunkSize);
-        console.log(
-          `index ${i}, import status: ${isImporting}, ref status ${isImportingRef.current}`,
-        );
 
         const analyzeResults = await analyzeFens(chunk);
         if (analyzeResults === null) {

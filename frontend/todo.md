@@ -29,9 +29,9 @@
 ~~- make arrows different opacity~~<br>
 ~~- add arrows for the best moves~~<br>
 ~~- make user arrow orange~~<br>
+~~- bug: can't move from branch to mainline~~<br>
 
 - make waiting bar for moves extend
-- bug: can't move from branch to mainline
 - evaluation graph
 - add loading bar while its generating the analysis array
 - add a notification for errors
