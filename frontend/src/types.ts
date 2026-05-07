@@ -38,3 +38,12 @@ export type Arrow = {
   endSquare: string;
   color: string;
 }
+
+export type MoveClassification = 
+  "best" |
+  "excellent" |
+  "okay" |
+  "inaccuracy" |
+  "mistake" |
+  "blunder" |
+  null

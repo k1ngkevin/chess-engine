@@ -16,7 +16,11 @@ import checkSound from "./assets/check.mp3";
 import moveSound from "./assets/move.mp3";
 import promoteSound from "./assets/promote.mp3";
 import checkmateSound from "./assets/checkmate.mp3";
-import { type EngineMove, type EngineEvaluation } from "./types";
+import {
+  type EngineMove,
+  type EngineEvaluation,
+  type MoveClassification,
+} from "./types";
 import "./App.css";
 
 const App = () => {
@@ -37,6 +41,9 @@ const App = () => {
   const [bestMovesArr, setBestMovesArr] = useState<(EngineMove[] | null)[]>([]);
   const [playedMovesEval, setPlayedMovesEval] = useState<
     (EngineEvaluation | null)[]
+  >([]);
+  const [moveClassifications, setMoveClassifications] = useState<
+    MoveClassification[]
   >([]);
 
   const [pgn, setPgn] = useState("");
@@ -249,16 +256,17 @@ const App = () => {
     }
   }
 
-  async function analyzeAndEvaluateRemainingMoves(
+  async function analyzeAndEvaluateMoves(
     startIndex: number,
     fens: string[],
     chunkSize = 3,
   ) {
     try {
-      for (let i = startIndex; i < fens.length; i += chunkSize) {
-        const chunk = fens.slice(i, i + chunkSize);
+      for (let i = startIndex; i < fens.length - 1; i += chunkSize) {
+        const beforeChunk = fens.slice(i, i + chunkSize);
+        const afterChunk = fens.slice(i + 1, i + 1 + chunkSize);
 
-        const analyzeResults = await analyzeFens(chunk);
+        const analyzeResults = await analyzeFens(beforeChunk);
         if (analyzeResults === null) {
           return null;
         }
@@ -271,10 +279,11 @@ const App = () => {
               analyzeCopy[i + j] = result;
             }
           });
+
           return analyzeCopy;
         });
 
-        const evaluationResults = await evaluateFens(chunk);
+        const evaluationResults = await evaluateFens(afterChunk);
         if (evaluationResults === null) {
           return null;
         }
@@ -284,10 +293,49 @@ const App = () => {
 
           evaluationResults.forEach((result, j) => {
             if (result !== null) {
-              evaluationCopy[i + j] = result;
+              evaluationCopy[i + j + 1] = result;
             }
           });
+
           return evaluationCopy;
+        });
+
+        setMoveClassifications((prev) => {
+          const classificationsCopy = [...prev];
+
+          analyzeResults.forEach((move, j) => {
+            const playedEval = evaluationResults[j];
+            const fenBefore = beforeChunk[j];
+
+            if (!move || !playedEval || !fenBefore) {
+              classificationsCopy[i + j] = null;
+              return;
+            }
+
+            const bestMove = move[0];
+
+            if (!bestMove) {
+              classificationsCopy[i + j] = null;
+              return;
+            }
+
+            const bestMoveValue = bestMoveToCentipawn(bestMove);
+            const playedMoveValue = evaluationToCentipawn(playedEval);
+            const sideToMove = getSideToMove(fenBefore);
+
+            if (bestMoveValue === null) {
+              classificationsCopy[i + j] = null;
+              return;
+            }
+
+            classificationsCopy[i + j] = classifyMove(
+              bestMoveValue,
+              playedMoveValue,
+              sideToMove,
+            );
+          });
+
+          return classificationsCopy;
         });
       }
     } catch (error) {
@@ -329,42 +377,10 @@ const App = () => {
         fens.push(replay.fen());
       }
 
-      const firstBranchSize = Math.min(5, fens.length);
-      const chunk = fens.slice(0, firstBranchSize);
-
-      const tempBestMoves: (EngineMove[] | null)[] = new Array(
-        fens.length,
-      ).fill(null);
-      const tempUserMovesEval: (EngineEvaluation | null)[] = new Array(
-        fens.length,
-      ).fill(null);
-
-      const analyzeResults = await analyzeFens(chunk);
-      if (analyzeResults === null) {
-        return;
-      }
-      analyzeResults.forEach((result, i) => {
-        if (result !== null) {
-          tempBestMoves[i] = result;
-        }
-      });
-
-      const evaluationResults = await evaluateFens(chunk);
-      if (evaluationResults === null) {
-        return;
-      }
-      evaluationResults.forEach((result, i) => {
-        if (result !== null) {
-          tempUserMovesEval[i] = result;
-        }
-      });
-
-      setPlayedMovesEval(tempUserMovesEval);
-      setBestMovesArr(tempBestMoves);
       setMainlineMoves(history);
       setMainlineFens(fens);
       setCurrentIndex(0);
-      await analyzeAndEvaluateRemainingMoves(firstBranchSize, fens);
+      await analyzeAndEvaluateMoves(0, fens);
       setSidebarView("analysis");
     } catch (error) {
       console.error("Import failed:", error);
@@ -570,6 +586,54 @@ const App = () => {
     setSidebarView("import");
   }
 
+  function bestMoveToCentipawn(bestMove: EngineMove) {
+    if (bestMove.centipawn != null) {
+      return bestMove.centipawn;
+    }
+
+    if (bestMove.mate != null) {
+      return bestMove.mate > 0 ? 10000 : -10000;
+    }
+
+    return null;
+  }
+
+  function evaluationToCentipawn(evaluation: EngineEvaluation) {
+    if (evaluation.type === "cp") {
+      return evaluation.value;
+    }
+    return evaluation.value > 0 ? 10000 : -10000;
+  }
+
+  function getSideToMove(fen: string) {
+    return fen.split(" ")[1] as "w" | "b";
+  }
+
+  function evalToWinPercent(cp: number) {
+    return 50 + 50 * (2 / (1 + Math.exp(-0.004 * cp)) - 1);
+  }
+
+  function classifyMove(
+    bestCp: number,
+    playedCp: number,
+    sideToMove: "w" | "b",
+  ) {
+    const bestWin = evalToWinPercent(bestCp);
+    const playedWin = evalToWinPercent(playedCp);
+
+    const loss = Math.max(
+      0,
+      sideToMove === "w" ? bestWin - playedWin : playedWin - bestWin,
+    );
+
+    if (loss <= 1) return "best";
+    if (loss <= 3.5) return "excellent";
+    if (loss <= 6) return "okay";
+    if (loss <= 10) return "inaccuracy";
+    if (loss <= 20) return "mistake";
+    return "blunder";
+  }
+
   return (
     <div className="container">
       <div className="boardContainer">
@@ -623,6 +687,7 @@ const App = () => {
             isOnMainline: isOnMainline,
             currentBranchId: currentBranchId,
             currentBranchIndex: currentBranchIndex,
+            moveClassification: moveClassifications,
           }}
           actions={{
             onImportPgn: importPgn,

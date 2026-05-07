@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import styles from "./Sidebar.module.css";
-import { type Branch, type EngineMove } from "./types.ts";
+import {
+  type Branch,
+  type EngineMove,
+  type MoveClassification,
+} from "./types.ts";
 import MovesList from "./MovesList.tsx";
 import Analyze from "./Analyze.tsx";
 import PgnImportForm from "./PgnImportForm.tsx";
@@ -30,6 +34,7 @@ type SidebarProps = {
     isOnMainline: boolean;
     currentBranchId: string | null;
     currentBranchIndex: number;
+    moveClassification: MoveClassification[];
   };
   actions: {
     onImportPgn: (pgn: string) => Promise<void>;
@@ -61,6 +66,7 @@ const Sidebar = ({
     isOnMainline,
     currentBranchId,
     currentBranchIndex,
+    moveClassification,
   } = gameState;
 
   const { onImportPgn, onBackButton } = actions;
@@ -115,6 +121,9 @@ const Sidebar = ({
           />
         </div>
       )}
+      <div>
+        <p style={{ color: "white" }}>{moveClassification[currentIndex - 1]}</p>
+      </div>
     </div>
   );
 };
