@@ -71,6 +71,15 @@ const Sidebar = ({
 
   const { onImportPgn, onBackButton } = actions;
 
+  const currentBranch = branches.find(
+    (branch) => branch.id === currentBranchId,
+  );
+
+  const currentBranchClassification =
+    currentBranchIndex > 0
+      ? currentBranch?.classifications[currentBranchIndex - 1]
+      : null;
+
   return (
     <div className={styles.sidebarContainer}>
       {sidebarView === "analysis" && (
@@ -122,7 +131,13 @@ const Sidebar = ({
         </div>
       )}
       <div>
-        <p style={{ color: "white" }}>{moveClassification[currentIndex - 1]}</p>
+        {isOnMainline ? (
+          <p style={{ color: "white" }}>
+            {moveClassification[currentIndex - 1]}
+          </p>
+        ) : (
+          <p style={{ color: "white" }}>{currentBranchClassification ?? ""}</p>
+        )}
       </div>
     </div>
   );

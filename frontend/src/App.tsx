@@ -43,7 +43,7 @@ const App = () => {
     (EngineEvaluation | null)[]
   >([]);
   const [moveClassifications, setMoveClassifications] = useState<
-    MoveClassification[]
+    (MoveClassification | null)[]
   >([]);
 
   const [pgn, setPgn] = useState("");
@@ -398,8 +398,10 @@ const App = () => {
       setSidebarView("analysis");
       if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
+        const nextMoveIndex = nextIndex - 1;
         setMainlineMoves((prev) => [...prev, move.san]);
         setMainlineFens((prev) => [...prev, game.fen()]);
+        setMoveClassifications((prev) => [...prev, null]);
 
         setCurrentIndex(nextIndex);
         setCurrentFen(game.fen());
@@ -409,7 +411,7 @@ const App = () => {
         setIsOnMainline(true);
 
         playSound(move.san);
-        void analyzeUserMove(game.fen(), nextIndex);
+        void analyzeUserMove(currentFen, game.fen(), nextMoveIndex);
         return true;
       }
 
@@ -422,6 +424,7 @@ const App = () => {
           fens: [currentFen, game.fen()],
           evaluations: [null],
           bestMoves: [null],
+          classifications: [null],
         };
 
         setBranches((prev) => [...prev, newBranch]);
@@ -432,7 +435,7 @@ const App = () => {
         setIsOnMainline(false);
 
         playSound(move.san);
-        void analyzeBranchMove(branchId, game.fen(), 0);
+        void analyzeBranchMove(branchId, currentFen, game.fen(), 0);
         return true;
       }
       if (!currentBranchId) return false;
@@ -451,6 +454,10 @@ const App = () => {
             fens: [...branch.fens.slice(0, nextFenIndex), game.fen()],
             evaluations: [...branch.evaluations.slice(0, nextMoveIndex), null],
             bestMoves: [...branch.bestMoves.slice(0, nextMoveIndex), null],
+            classifications: [
+              ...branch.classifications.slice(0, nextMoveIndex),
+              null,
+            ],
           };
         }),
       );
@@ -459,7 +466,12 @@ const App = () => {
       setIsOnMainline(false);
 
       playSound(move.san);
-      void analyzeBranchMove(currentBranchId, game.fen(), nextMoveIndex);
+      void analyzeBranchMove(
+        currentBranchId,
+        currentFen,
+        game.fen(),
+        nextMoveIndex,
+      );
       return true;
     } catch {
       console.log("invalid move");
@@ -467,24 +479,46 @@ const App = () => {
     }
   }
 
-  async function analyzeBranchMove(id: string, fen: string, index: number) {
+  async function analyzeBranchMove(
+    id: string,
+    fenBefore: string,
+    fenAfter: string,
+    index: number,
+  ) {
     try {
-      const bestMovesResult = await analyzeFen(fen);
-      const evaluationResult = await getFenEvaluation(fen);
+      const bestMovesResult = await analyzeFen(fenBefore);
+      if (bestMovesResult == null) return;
+      const evaluationResult = await getFenEvaluation(fenAfter);
+      if (evaluationResult == null) return;
+      if (bestMovesResult[0] == null) return;
+
+      const bestMoveValue = bestMoveToCentipawn(bestMovesResult[0]);
+      if (bestMoveValue == null) return;
+      const playedMoveValue = evaluationToCentipawn(evaluationResult);
+      const sideToMove = getSideToMove(fenBefore);
+
+      const classificationsValue = classifyMove(
+        bestMoveValue,
+        playedMoveValue,
+        sideToMove,
+      );
 
       setBranches((prev) =>
         prev.map((branch) => {
           if (branch.id !== id) return branch;
           const bestMovesCopy = [...branch.bestMoves];
           const evaluationCopy = [...branch.evaluations];
+          const classificationsCopy = [...branch.classifications];
 
           bestMovesCopy[index] = bestMovesResult;
           evaluationCopy[index] = evaluationResult;
+          classificationsCopy[index] = classificationsValue;
 
           return {
             ...branch,
             bestMoves: bestMovesCopy,
             evaluations: evaluationCopy,
+            classifications: classificationsCopy,
           };
         }),
       );
@@ -493,20 +527,56 @@ const App = () => {
     }
   }
 
-  async function analyzeUserMove(fen: string, index: number) {
+  async function analyzeUserMove(
+    fenBefore: string,
+    fenAfter: string,
+    index: number,
+  ) {
     try {
-      const bestMovesResult = await analyzeFen(fen);
+      const analyzeResults = await analyzeFen(fenBefore);
+      if (analyzeResults == null) return;
       setBestMovesArr((prev) => {
         const bestMovesCopy = [...prev];
-        bestMovesCopy[index] = bestMovesResult;
+        bestMovesCopy[index] = analyzeResults;
         return bestMovesCopy;
       });
 
-      const evaluationResult = await getFenEvaluation(fen);
+      const evaluationResults = await getFenEvaluation(fenAfter);
+      if (evaluationResults == null) return;
       setPlayedMovesEval((prev) => {
         const evaluationCopy = [...prev];
-        evaluationCopy[index] = evaluationResult;
+        evaluationCopy[index + 1] = evaluationResults;
         return evaluationCopy;
+      });
+
+      const moves = analyzeResults[0];
+      const playedEval = evaluationResults;
+
+      setMoveClassifications((prev) => {
+        const copy = [...prev];
+        if (!moves || !playedEval) {
+          copy[index] = null;
+          return copy;
+        }
+
+        const bestMove = moves;
+
+        if (!bestMove) {
+          copy[index] = null;
+          return copy;
+        }
+
+        const bestMoveValue = bestMoveToCentipawn(bestMove);
+        const playedMoveValue = evaluationToCentipawn(playedEval);
+        const sideToMove = getSideToMove(fenBefore);
+
+        if (bestMoveValue === null) {
+          copy[index] = null;
+          return copy;
+        }
+
+        copy[index] = classifyMove(bestMoveValue, playedMoveValue, sideToMove);
+        return copy;
       });
     } catch (error) {
       console.error(error);

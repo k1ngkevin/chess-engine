@@ -31,6 +31,7 @@ export type Branch = {
   fens: string[];
   evaluations: (EngineEvaluation | null)[];
   bestMoves: (EngineMove[] | null)[];
+  classifications: (MoveClassification | null)[];
 };
 
 export type Arrow = {
