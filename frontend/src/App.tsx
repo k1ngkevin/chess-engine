@@ -37,7 +37,6 @@ const App = () => {
   const [currentBranchId, setCurrentBranchId] = useState<string | null>(null);
   const [currentBranchIndex, setCurrentBranchIndex] = useState<number>(-1);
 
-  const [bestMoves, setBestMoves] = useState<EngineMove[]>([]);
   const [bestMovesArr, setBestMovesArr] = useState<(EngineMove[] | null)[]>([]);
   const [playedMovesEval, setPlayedMovesEval] = useState<
     (EngineEvaluation | null)[]
@@ -65,7 +64,7 @@ const App = () => {
   const promoteSoundRef = useRef(new Audio(promoteSound));
   const checkmateSoundRef = useRef(new Audio(checkmateSound));
 
-  (useEffect(() => {
+  useEffect(() => {
     function handleKeypress(e: KeyboardEvent) {
       if (
         e.target instanceof HTMLTextAreaElement ||
@@ -87,8 +86,7 @@ const App = () => {
     return () => {
       window.removeEventListener("keydown", handleKeypress);
     };
-  }),
-    [nextMove, prevMove, mainlineFens.length]);
+  });
 
   useEffect(() => {
     async function analyzeStartingPosition() {
@@ -263,7 +261,10 @@ const App = () => {
   ) {
     try {
       for (let i = startIndex; i < fens.length - 1; i += chunkSize) {
-        const beforeChunk = fens.slice(i, i + chunkSize);
+        const beforeChunk = fens.slice(
+          i,
+          Math.min(i + chunkSize, fens.length - 1),
+        );
         const afterChunk = fens.slice(i + 1, i + 1 + chunkSize);
 
         const analyzeResults = await analyzeFens(beforeChunk);
@@ -338,6 +339,18 @@ const App = () => {
           return classificationsCopy;
         });
       }
+
+      const lastFenIndex = fens.length - 1;
+      if (lastFenIndex >= startIndex) {
+        const finalPositionBestMoves = await analyzeFen(fens[lastFenIndex]);
+        if (finalPositionBestMoves !== null) {
+          setBestMovesArr((prev) => {
+            const analyzeCopy = [...prev];
+            analyzeCopy[lastFenIndex] = finalPositionBestMoves;
+            return analyzeCopy;
+          });
+        }
+      }
     } catch (error) {
       console.error("background analysis failed:", error);
     }
@@ -398,10 +411,12 @@ const App = () => {
       setSidebarView("analysis");
       if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
-        const nextMoveIndex = nextIndex - 1;
+        const playedMoveIndex = nextIndex - 1;
         setMainlineMoves((prev) => [...prev, move.san]);
         setMainlineFens((prev) => [...prev, game.fen()]);
         setMoveClassifications((prev) => [...prev, null]);
+        setBestMovesArr((prev) => [...prev, null]);
+        setPlayedMovesEval((prev) => [...prev, null]);
 
         setCurrentIndex(nextIndex);
         setCurrentFen(game.fen());
@@ -411,7 +426,12 @@ const App = () => {
         setIsOnMainline(true);
 
         playSound(move.san);
-        void analyzeUserMove(currentFen, game.fen(), nextMoveIndex);
+        void analyzeUserMove(
+          currentFen,
+          game.fen(),
+          playedMoveIndex,
+          nextIndex,
+        );
         return true;
       }
 
@@ -423,7 +443,7 @@ const App = () => {
           moves: [move.san],
           fens: [currentFen, game.fen()],
           evaluations: [null],
-          bestMoves: [null],
+          bestMoves: [bestMovesArr[currentIndex] ?? null, null],
           classifications: [null],
         };
 
@@ -435,7 +455,7 @@ const App = () => {
         setIsOnMainline(false);
 
         playSound(move.san);
-        void analyzeBranchMove(branchId, currentFen, game.fen(), 0);
+        void analyzeBranchMove(branchId, currentFen, game.fen(), 0, 1);
         return true;
       }
       if (!currentBranchId) return false;
@@ -453,7 +473,7 @@ const App = () => {
             moves: [...branch.moves.slice(0, nextMoveIndex), move.san],
             fens: [...branch.fens.slice(0, nextFenIndex), game.fen()],
             evaluations: [...branch.evaluations.slice(0, nextMoveIndex), null],
-            bestMoves: [...branch.bestMoves.slice(0, nextMoveIndex), null],
+            bestMoves: [...branch.bestMoves.slice(0, nextFenIndex), null],
             classifications: [
               ...branch.classifications.slice(0, nextMoveIndex),
               null,
@@ -471,6 +491,7 @@ const App = () => {
         currentFen,
         game.fen(),
         nextMoveIndex,
+        nextFenIndex,
       );
       return true;
     } catch {
@@ -483,16 +504,42 @@ const App = () => {
     id: string,
     fenBefore: string,
     fenAfter: string,
-    index: number,
+    moveIndex: number,
+    currentFenIndex: number,
   ) {
     try {
-      const bestMovesResult = await analyzeFen(fenBefore);
-      if (bestMovesResult == null) return;
-      const evaluationResult = await getFenEvaluation(fenAfter);
-      if (evaluationResult == null) return;
-      if (bestMovesResult[0] == null) return;
+      const [bestMovesBefore, currentBestMovesResult, evaluationResult] =
+        await Promise.all([
+          analyzeFen(fenBefore),
+          analyzeFen(fenAfter),
+          getFenEvaluation(fenAfter),
+        ]);
+      if (bestMovesBefore == null && currentBestMovesResult == null) return;
 
-      const bestMoveValue = bestMoveToCentipawn(bestMovesResult[0]);
+      setBranches((prev) =>
+        prev.map((branch) => {
+          if (branch.id !== id) return branch;
+          const bestMovesCopy = [...branch.bestMoves];
+
+          if (bestMovesBefore !== null) {
+            bestMovesCopy[moveIndex] = bestMovesBefore;
+          }
+          if (currentBestMovesResult !== null) {
+            bestMovesCopy[currentFenIndex] = currentBestMovesResult;
+          }
+
+          return {
+            ...branch,
+            bestMoves: bestMovesCopy,
+          };
+        }),
+      );
+
+      if (evaluationResult == null) return;
+      if (bestMovesBefore == null) return;
+      if (bestMovesBefore[0] == null) return;
+
+      const bestMoveValue = bestMoveToCentipawn(bestMovesBefore[0]);
       if (bestMoveValue == null) return;
       const playedMoveValue = evaluationToCentipawn(evaluationResult);
       const sideToMove = getSideToMove(fenBefore);
@@ -506,17 +553,14 @@ const App = () => {
       setBranches((prev) =>
         prev.map((branch) => {
           if (branch.id !== id) return branch;
-          const bestMovesCopy = [...branch.bestMoves];
           const evaluationCopy = [...branch.evaluations];
           const classificationsCopy = [...branch.classifications];
 
-          bestMovesCopy[index] = bestMovesResult;
-          evaluationCopy[index] = evaluationResult;
-          classificationsCopy[index] = classificationsValue;
+          evaluationCopy[moveIndex] = evaluationResult;
+          classificationsCopy[moveIndex] = classificationsValue;
 
           return {
             ...branch,
-            bestMoves: bestMovesCopy,
             evaluations: evaluationCopy,
             classifications: classificationsCopy,
           };
@@ -530,39 +574,50 @@ const App = () => {
   async function analyzeUserMove(
     fenBefore: string,
     fenAfter: string,
-    index: number,
+    playedMoveIndex: number,
+    currentFenIndex: number,
   ) {
     try {
-      const analyzeResults = await analyzeFen(fenBefore);
-      if (analyzeResults == null) return;
+      const [bestMovesBefore, currentBestMovesResult, evaluationResults] =
+        await Promise.all([
+          analyzeFen(fenBefore),
+          analyzeFen(fenAfter),
+          getFenEvaluation(fenAfter),
+        ]);
+      if (bestMovesBefore == null && currentBestMovesResult == null) return;
       setBestMovesArr((prev) => {
         const bestMovesCopy = [...prev];
-        bestMovesCopy[index] = analyzeResults;
+        if (bestMovesBefore !== null) {
+          bestMovesCopy[playedMoveIndex] = bestMovesBefore;
+        }
+        if (currentBestMovesResult !== null) {
+          bestMovesCopy[currentFenIndex] = currentBestMovesResult;
+        }
         return bestMovesCopy;
       });
 
-      const evaluationResults = await getFenEvaluation(fenAfter);
       if (evaluationResults == null) return;
+      if (bestMovesBefore == null) return;
       setPlayedMovesEval((prev) => {
         const evaluationCopy = [...prev];
-        evaluationCopy[index + 1] = evaluationResults;
+        evaluationCopy[currentFenIndex] = evaluationResults;
         return evaluationCopy;
       });
 
-      const moves = analyzeResults[0];
+      const moves = bestMovesBefore[0];
       const playedEval = evaluationResults;
 
       setMoveClassifications((prev) => {
         const copy = [...prev];
         if (!moves || !playedEval) {
-          copy[index] = null;
+          copy[playedMoveIndex] = null;
           return copy;
         }
 
         const bestMove = moves;
 
         if (!bestMove) {
-          copy[index] = null;
+          copy[playedMoveIndex] = null;
           return copy;
         }
 
@@ -571,11 +626,15 @@ const App = () => {
         const sideToMove = getSideToMove(fenBefore);
 
         if (bestMoveValue === null) {
-          copy[index] = null;
+          copy[playedMoveIndex] = null;
           return copy;
         }
 
-        copy[index] = classifyMove(bestMoveValue, playedMoveValue, sideToMove);
+        copy[playedMoveIndex] = classifyMove(
+          bestMoveValue,
+          playedMoveValue,
+          sideToMove,
+        );
         return copy;
       });
     } catch (error) {
@@ -630,15 +689,6 @@ const App = () => {
     } catch (error) {
       console.error(error);
       return fens.map(() => null);
-    }
-  }
-
-  async function handleAnalyze(): Promise<void> {
-    try {
-      const response = await analyzePosition(currentFen);
-      setBestMoves(response.best_moves);
-    } catch (error) {
-      console.error(error);
     }
   }
 

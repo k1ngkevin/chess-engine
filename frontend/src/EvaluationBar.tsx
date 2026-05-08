@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import { type EngineEvaluation, type Branch } from "./types.ts";
 import styles from "./EvaluationBar.module.css";
 
@@ -19,12 +19,8 @@ const EvaluationBar = ({
   isOnMainline,
   playedMovesEvaluation,
 }: EvaluationProps) => {
-  const previousEvaluationRef = useRef<EngineEvaluation | null>(null);
-  useEffect(() => {
-    if (playedMovesEvaluation.length === 0) {
-      previousEvaluationRef.current = null;
-    }
-  }, [playedMovesEvaluation.length]);
+  const [cachedEvaluation, setCachedEvaluation] =
+    useState<EngineEvaluation | null>(null);
 
   const currentMainlineEvaluation = playedMovesEvaluation[currentIndex] ?? null;
 
@@ -37,12 +33,6 @@ const EvaluationBar = ({
   const currentEvaluation = isOnMainline
     ? currentMainlineEvaluation
     : currentBranchEvaluation;
-
-  useEffect(() => {
-    if (currentEvaluation != null) {
-      previousEvaluationRef.current = currentEvaluation;
-    }
-  });
 
   function convertEvalToPercent(
     type: string,
@@ -70,9 +60,20 @@ const EvaluationBar = ({
     currentBranchIndex === -1 &&
     playedMovesEvaluation.length === 0;
 
-  const displayedEvaluation = isResetPosition
+  let displayedEvaluation = isResetPosition
     ? null
-    : (currentEvaluation ?? previousEvaluationRef.current);
+    : (currentEvaluation ?? cachedEvaluation);
+
+  if (isResetPosition && cachedEvaluation !== null) {
+    setCachedEvaluation(null);
+    displayedEvaluation = null;
+  } else if (
+    currentEvaluation !== null &&
+    currentEvaluation !== cachedEvaluation
+  ) {
+    setCachedEvaluation(currentEvaluation);
+    displayedEvaluation = currentEvaluation;
+  }
 
   const type = displayedEvaluation?.type ?? "cp";
   const value = displayedEvaluation?.value ?? 0;
