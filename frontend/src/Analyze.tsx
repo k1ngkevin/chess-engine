@@ -22,7 +22,7 @@ const Analyze = ({
     ? branches.find((branch) => branch.id === currentBranchId)
     : null;
   const currentBranchBestMoves =
-    currentBranch?.bestMoves[currentBranchIndex - 1] ?? null;
+    currentBranch?.bestMoves[currentBranchIndex] ?? null;
 
   const currentBestMoves = isOnMainline
     ? currentMainlineBestMoves

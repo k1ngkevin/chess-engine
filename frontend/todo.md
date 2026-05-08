@@ -30,13 +30,24 @@
 ~~- add arrows for the best moves~~<br>
 ~~- make user arrow orange~~<br>
 ~~- bug: can't move from branch to mainline~~<br>
+~~- add move classifications~~<br>
+~~- add classifications for the branch moves~~<br>
+
+- fix: best moves not loading when on last move of mainline or when user is first moving <br>
+- arrows behind by one when making new branch <br>
 
 - make waiting bar for moves extend
 - evaluation graph
 - add loading bar while its generating the analysis array
 - add a notification for errors
 - have storage of the state on user refresh
-- add move classifications
 - flip board feature
 - make the best moves clickable
 - add accuracy rating for each player and elo
+
+### classifications
+
+- add book
+- add great
+- add miss
+- add icons + colors for the moves

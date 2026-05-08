@@ -19,7 +19,7 @@ export async function analyzePosition(
     body: JSON.stringify({ fen, depth, num_results: numResults }),
   });
   if (!response.ok) {
-    throw new Error(`Reponse Status ${response.status}`);
+    throw new Error(`Response Status ${response.status}`);
   }
 
   const data: AnalyzeResponse = await response.json();
@@ -37,7 +37,7 @@ export async function analyzeFenBatch(
     body: JSON.stringify({ fens, depth, num_results: numResults }),
   });
   if (!response.ok) {
-    throw new Error(`Reponse Status ${response.status}`);
+    throw new Error(`Response Status ${response.status}`);
   }
 
   const data: AnalyzeBatchResponse = await response.json();
@@ -54,7 +54,7 @@ export async function fetchFenEvaluation(
     body: JSON.stringify({ fen, depth }),
   });
   if (!response.ok) {
-    throw new Error(`Reponse Status ${response.status}`);
+    throw new Error(`Response Status ${response.status}`);
   }
 
   const data: EngineEvaluation = await response.json();
@@ -71,7 +71,7 @@ export async function evaluateFensBatch(
     body: JSON.stringify({ fens, depth }),
   });
   if (!response.ok) {
-    throw new Error(`Reponse Status ${response.status}`);
+    throw new Error(`Response Status ${response.status}`);
   }
 
   const data: EvaluateBatchResponse = await response.json();

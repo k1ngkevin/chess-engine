@@ -31,6 +31,7 @@ export type Branch = {
   fens: string[];
   evaluations: (EngineEvaluation | null)[];
   bestMoves: (EngineMove[] | null)[];
+  classifications: (MoveClassification | null)[];
 };
 
 export type Arrow = {
@@ -38,3 +39,12 @@ export type Arrow = {
   endSquare: string;
   color: string;
 }
+
+export type MoveClassification = 
+  "best" |
+  "excellent" |
+  "okay" |
+  "inaccuracy" |
+  "mistake" |
+  "blunder" |
+  null

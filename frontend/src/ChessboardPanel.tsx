@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "./ChessboardPanel.module.css";
 import { Chess, type Square } from "chess.js";
 import {
@@ -41,21 +41,22 @@ function ChessboardPanel({
   const chessGame = fen ? new Chess(fen) : new Chess();
   const [moveFrom, setMoveFrom] = useState("");
   const [optionSquares, setOptionSquares] = useState({});
-  const [engineArrows, setEngineArrows] = useState<Arrow[]>([]);
 
-  useEffect(() => {
+  const engineArrows = useMemo(() => {
     const currentMainlineBestMoves = bestMoves[currentIndex];
     const currentBranch = currentBranchId
       ? branches.find((branch) => branch.id === currentBranchId)
       : null;
     const currentBranchBestMoves =
-      currentBranch?.bestMoves[currentBranchIndex - 1] ?? null;
+      currentBranch?.bestMoves[currentBranchIndex] ?? null;
 
     const currentBestMoves = isOnMainline
       ? currentMainlineBestMoves
       : currentBranchBestMoves;
-    if (currentBestMoves == null) return;
-    const newArrows = currentBestMoves
+    if (currentBestMoves == null) {
+      return [];
+    }
+    return currentBestMoves
       .slice(0, 3)
       .map((move, idx) => {
         const bestMoveUci = move.uci;
@@ -69,8 +70,6 @@ function ChessboardPanel({
         };
       })
       .filter((arrow): arrow is Arrow => arrow !== undefined);
-
-    setEngineArrows(newArrows);
   }, [
     branches,
     bestMoves,
@@ -79,18 +78,6 @@ function ChessboardPanel({
     currentBranchId,
     currentBranchIndex,
   ]);
-
-  function gameOver(): string | void {
-    if (chessGame.isStalemate()) {
-      return "draw: stalemate";
-    }
-    if (chessGame.isThreefoldRepetition()) {
-      return "draw: repetition";
-    }
-    if (chessGame.isGameOver()) {
-      return "game over";
-    }
-  }
 
   function getMoveOptions(square: Square) {
     const moves = chessGame.moves({
