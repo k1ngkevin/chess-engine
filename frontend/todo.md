@@ -40,7 +40,9 @@
 - flip board feature
 - make the best moves clickable
 - add accuracy rating for each player and elo
-- fix: best moves not loading when on last move of mainline
+
+**- fix: best moves not loading when on last move of mainline or when user is first moving**
+**- arrows behind by one when making new branch**
 
 ### classifications
 
@@ -48,4 +50,4 @@
 - add great
 - add miss
 - add icons + colors for the moves
-- add classifications for the branch moves
+  ~~- add classifications for the branch moves~~<br>
