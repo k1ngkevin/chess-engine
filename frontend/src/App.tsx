@@ -767,6 +767,7 @@ const App = () => {
         />
         <ChessboardPanel
           fen={currentFen}
+          mainlineMoves={mainlineMoves}
           onUserMove={handleUserMove}
           branches={branches}
           bestMoves={bestMovesArr}
@@ -774,6 +775,7 @@ const App = () => {
           isOnMainline={isOnMainline}
           currentBranchId={currentBranchId}
           currentBranchIndex={currentBranchIndex}
+          moveClassifications={moveClassifications}
           playerInfo={{
             whiteUsername: whiteUsername,
             blackUsername: blackUsername,

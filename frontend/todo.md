@@ -51,3 +51,4 @@
 - add great
 - add miss
 - add icons + colors for the moves
+- change move structure to type with from, to, san

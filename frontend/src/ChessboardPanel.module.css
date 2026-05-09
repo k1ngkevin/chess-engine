@@ -4,6 +4,23 @@
   overflow: visible;
 }
 
+.boardWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.classificationIcon {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  z-index: 25;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+
 .playerContainer {
   display: flex;
   align-items: center;

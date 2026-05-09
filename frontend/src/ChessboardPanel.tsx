@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import styles from "./ChessboardPanel.module.css";
 import { Chess, type Square } from "chess.js";
 import {
@@ -7,10 +7,23 @@ import {
   type SquareHandlerArgs,
 } from "react-chessboard";
 
-import { type Branch, type EngineMove, type Arrow } from "./types";
+import {
+  type Branch,
+  type EngineMove,
+  type Arrow,
+  type MoveClassification,
+} from "./types";
+
+import bestIcon from "./assets/Classification-Icons/best_64x.png";
+import excellentIcon from "./assets/Classification-Icons/excellent_64x.png";
+import goodIcon from "./assets/Classification-Icons/good_64x.png";
+import inaccuracyIcon from "./assets/Classification-Icons/inaccuracy_64x.png";
+import mistakeIcon from "./assets/Classification-Icons/mistake_64x.png";
+import blunderIcon from "./assets/Classification-Icons/blunder_64x.png";
 
 type ChessboardProps = {
   fen: string;
+  mainlineMoves: string[];
   onUserMove: (from: string, to: string) => boolean;
   branches: Branch[];
   bestMoves: (EngineMove[] | null)[];
@@ -18,6 +31,7 @@ type ChessboardProps = {
   isOnMainline: boolean;
   currentBranchId: string | null;
   currentBranchIndex: number;
+  moveClassifications: MoveClassification[];
   playerInfo: {
     whiteUsername: string;
     blackUsername: string;
@@ -28,6 +42,7 @@ type ChessboardProps = {
 
 function ChessboardPanel({
   fen,
+  mainlineMoves,
   onUserMove,
   branches,
   bestMoves,
@@ -35,12 +50,69 @@ function ChessboardPanel({
   isOnMainline,
   currentBranchId,
   currentBranchIndex,
+  moveClassifications,
   playerInfo,
 }: ChessboardProps) {
   const { whiteUsername, blackUsername, whiteElo, blackElo } = playerInfo;
   const chessGame = fen ? new Chess(fen) : new Chess();
   const [moveFrom, setMoveFrom] = useState("");
   const [optionSquares, setOptionSquares] = useState({});
+
+  const [boardSize, setBoardSize] = useState(0);
+  const boardRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function updateBoardSize() {
+      if (boardRef.current) {
+        setBoardSize(boardRef.current.offsetWidth);
+      }
+    }
+
+    updateBoardSize();
+
+    window.addEventListener("resize", updateBoardSize);
+
+    return () => {
+      window.removeEventListener("resize", updateBoardSize);
+    };
+  }, []);
+
+  const classificationToIcon: Record<string, string> = {
+    best: bestIcon,
+    excellent: excellentIcon,
+    good: goodIcon,
+    inaccuracy: inaccuracyIcon,
+    mistake: mistakeIcon,
+    blunder: blunderIcon,
+  };
+
+  const mainlineClassification = moveClassifications[currentIndex - 1];
+
+  const currentBranch = branches.find(
+    (branch) => branch.id === currentBranchId,
+  );
+
+  const currentBranchClassification =
+    currentBranchIndex > 0
+      ? currentBranch?.classifications[currentBranchIndex - 1]
+      : null;
+
+  const currentClassification = isOnMainline
+    ? mainlineClassification
+    : currentBranchClassification;
+
+  const currentSquare = isOnMainline
+    ? mainlineMoves[currentIndex - 1]
+    : currentBranch?.moves[currentBranchIndex]; // maybe currentBranchIndex - 1
+
+  const currentIconClassification = currentClassification
+    ? [
+        {
+          square: currentSquare,
+          src: classificationToIcon[currentClassification],
+        },
+      ]
+    : [];
 
   const engineArrows = useMemo(() => {
     const currentMainlineBestMoves = bestMoves[currentIndex];
@@ -154,6 +226,21 @@ function ChessboardPanel({
     return false;
   }
 
+  function getIconPosition(square: string, boardSize: number) {
+    const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+    const file = square[0];
+    const rank = Number(square[1]);
+
+    const col = files.indexOf(file);
+    const row = 8 - rank;
+
+    const squareSize = boardSize / 8;
+    return {
+      left: `${col * squareSize + squareSize * 0.58}px`,
+      top: `${row * squareSize + squareSize * 0.05}px`,
+    };
+  }
+
   const arrowOptions = {
     color: "#ffaa00",
     secondaryColor: "#4caf50",
@@ -187,8 +274,19 @@ function ChessboardPanel({
         </span>
       </div>
 
-      <div>
+      <div className={styles.boardWrapper} ref={boardRef}>
         <Chessboard options={chessboardOptions} />
+        {currentIconClassification.map((icon) => {
+          if (!icon.square) return null;
+          return (
+            <img
+              key={icon.square}
+              src={icon.src}
+              className={styles.classificationIcon}
+              style={getIconPosition(icon.square, boardSize)}
+            />
+          );
+        })}
       </div>
 
       <div className={`${styles.playerContainer} ${styles.whitePlayer}`}>
