@@ -20,11 +20,12 @@ import {
   type EngineMove,
   type EngineEvaluation,
   type MoveClassification,
+  type GameMove,
 } from "./types";
 import "./App.css";
 
 const App = () => {
-  const [mainlineMoves, setMainlineMoves] = useState<string[]>([]);
+  const [mainlineMoves, setMainlineMoves] = useState<GameMove[]>([]);
   const [mainlineFens, setMainlineFens] = useState<string[]>([
     new Chess().fen(),
   ]);
@@ -115,7 +116,7 @@ const App = () => {
     const lastIndex = mainlineFens.length - 1;
     setCurrentIndex(lastIndex);
     setCurrentFen(mainlineFens[lastIndex]);
-    playSound(mainlineMoves[lastIndex - 1]);
+    playSound(mainlineMoves[lastIndex - 1].san);
 
     if (!isOnMainline) {
       setCurrentBranchIndex(-1);
@@ -134,7 +135,7 @@ const App = () => {
     setCurrentIndex(move);
     setCurrentFen(mainlineFens[move]);
     if (move > 0) {
-      playSound(mainlineMoves[move - 1]);
+      playSound(mainlineMoves[move - 1].san);
     }
   }
 
@@ -149,7 +150,7 @@ const App = () => {
     setCurrentFen(branch.fens[move]);
 
     if (move > 0) {
-      playSound(branch.moves[move - 1]);
+      playSound(branch.moves[move - 1].san);
     }
   }
 
@@ -381,16 +382,22 @@ const App = () => {
       setBranches([]);
       getUsernameAndElo(pgn);
 
-      const history = temp.history();
+      const history = temp.history({ verbose: true });
       const replay = new Chess();
       const fens: string[] = [replay.fen()];
+
+      const gameMoves = history.map((move) => ({
+        san: move.san,
+        from: move.from,
+        to: move.to,
+      }));
 
       for (const move of history) {
         replay.move(move);
         fens.push(replay.fen());
       }
 
-      setMainlineMoves(history);
+      setMainlineMoves(gameMoves);
       setMainlineFens(fens);
       setCurrentIndex(0);
       await analyzeAndEvaluateMoves(0, fens);
@@ -412,7 +419,14 @@ const App = () => {
       if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
         const playedMoveIndex = nextIndex - 1;
-        setMainlineMoves((prev) => [...prev, move.san]);
+        setMainlineMoves((prev) => [
+          ...prev,
+          {
+            san: move.san,
+            from: move.from,
+            to: move.to,
+          },
+        ]);
         setMainlineFens((prev) => [...prev, game.fen()]);
         setMoveClassifications((prev) => [...prev, null]);
         setBestMovesArr((prev) => [...prev, null]);
@@ -440,7 +454,7 @@ const App = () => {
         const newBranch: Branch = {
           id: branchId,
           startIndex: currentIndex,
-          moves: [move.san],
+          moves: [{ san: move.san, from: move.from, to: move.to }],
           fens: [currentFen, game.fen()],
           evaluations: [null],
           bestMoves: [bestMovesArr[currentIndex] ?? null, null],
@@ -470,7 +484,10 @@ const App = () => {
           if (branch.id !== currentBranchId) return branch;
           return {
             ...branch,
-            moves: [...branch.moves.slice(0, nextMoveIndex), move.san],
+            moves: [
+              ...branch.moves.slice(0, nextMoveIndex),
+              { san: move.san, from: move.from, to: move.to },
+            ],
             fens: [...branch.fens.slice(0, nextFenIndex), game.fen()],
             evaluations: [...branch.evaluations.slice(0, nextMoveIndex), null],
             bestMoves: [...branch.bestMoves.slice(0, nextFenIndex), null],
@@ -767,6 +784,7 @@ const App = () => {
         />
         <ChessboardPanel
           fen={currentFen}
+          mainlineMoves={mainlineMoves}
           onUserMove={handleUserMove}
           branches={branches}
           bestMoves={bestMovesArr}
@@ -774,6 +792,7 @@ const App = () => {
           isOnMainline={isOnMainline}
           currentBranchId={currentBranchId}
           currentBranchIndex={currentBranchIndex}
+          moveClassifications={moveClassifications}
           playerInfo={{
             whiteUsername: whiteUsername,
             blackUsername: blackUsername,

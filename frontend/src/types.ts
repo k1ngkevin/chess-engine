@@ -11,6 +11,12 @@ export type EngineEvaluation = {
   value: number;
 };
 
+export type GameMove = {
+  san: string;
+  from: string;
+  to: string;
+}
+
 export type AnalyzeResponse = {
   best_moves: EngineMove[];
   fen: string;
@@ -27,7 +33,7 @@ export type EvaluateBatchResponse = {
 export type Branch = {
   id: string;
   startIndex: number;
-  moves: string[];
+  moves: GameMove[];
   fens: string[];
   evaluations: (EngineEvaluation | null)[];
   bestMoves: (EngineMove[] | null)[];

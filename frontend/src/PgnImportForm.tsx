@@ -31,7 +31,7 @@ const PgnImportForm = ({
         onClick={() => onImportPgn(pgn)}
       >
         <IconSearch stroke={1.75} />
-        {isImporting ? "Importing..." : "Analyze PGN"}
+        {isImporting ? "Analyzing..." : "Analyze PGN"}
       </button>
     </>
   );

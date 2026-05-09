@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import styles from "./ChessboardPanel.module.css";
 import { Chess, type Square } from "chess.js";
 import {
@@ -7,10 +7,24 @@ import {
   type SquareHandlerArgs,
 } from "react-chessboard";
 
-import { type Branch, type EngineMove, type Arrow } from "./types";
+import {
+  type Branch,
+  type EngineMove,
+  type Arrow,
+  type MoveClassification,
+  type GameMove,
+} from "./types";
+
+import bestIcon from "./assets/Classification-Icons/best_64x.png";
+import excellentIcon from "./assets/Classification-Icons/excellent_64x.png";
+import okayIcon from "./assets/Classification-Icons/okay_64x.png";
+import inaccuracyIcon from "./assets/Classification-Icons/inaccuracy_64x.png";
+import mistakeIcon from "./assets/Classification-Icons/mistake_64x.png";
+import blunderIcon from "./assets/Classification-Icons/blunder_64x.png";
 
 type ChessboardProps = {
   fen: string;
+  mainlineMoves: GameMove[];
   onUserMove: (from: string, to: string) => boolean;
   branches: Branch[];
   bestMoves: (EngineMove[] | null)[];
@@ -18,6 +32,7 @@ type ChessboardProps = {
   isOnMainline: boolean;
   currentBranchId: string | null;
   currentBranchIndex: number;
+  moveClassifications: MoveClassification[];
   playerInfo: {
     whiteUsername: string;
     blackUsername: string;
@@ -28,6 +43,7 @@ type ChessboardProps = {
 
 function ChessboardPanel({
   fen,
+  mainlineMoves,
   onUserMove,
   branches,
   bestMoves,
@@ -35,12 +51,101 @@ function ChessboardPanel({
   isOnMainline,
   currentBranchId,
   currentBranchIndex,
+  moveClassifications,
   playerInfo,
 }: ChessboardProps) {
   const { whiteUsername, blackUsername, whiteElo, blackElo } = playerInfo;
   const chessGame = fen ? new Chess(fen) : new Chess();
   const [moveFrom, setMoveFrom] = useState("");
   const [optionSquares, setOptionSquares] = useState({});
+  const [squareColor, setSquareColor] = useState<
+    Record<string, React.CSSProperties>
+  >({});
+
+  const [boardSize, setBoardSize] = useState(0);
+  const boardRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function updateBoardSize() {
+      if (boardRef.current) {
+        setBoardSize(boardRef.current.offsetWidth);
+      }
+    }
+
+    updateBoardSize();
+
+    window.addEventListener("resize", updateBoardSize);
+
+    return () => {
+      window.removeEventListener("resize", updateBoardSize);
+    };
+  }, []);
+
+  const classificationToIcon: Record<string, string> = {
+    best: bestIcon,
+    excellent: excellentIcon,
+    okay: okayIcon,
+    inaccuracy: inaccuracyIcon,
+    mistake: mistakeIcon,
+    blunder: blunderIcon,
+  };
+
+  const classificationToSquareColor: Record<string, string> = {
+    best: "rgba(129, 182, 76, 0.50)",
+    excellent: "rgba(129, 182, 76, 0.50)",
+    okay: "rgba(129, 182, 76, 0.42)",
+    inaccuracy: "rgba(245, 196, 66, 0.50)",
+    mistake: "rgba(245, 130, 49, 0.50)",
+    blunder: "rgba(214, 79, 79, 0.55)",
+  };
+
+  const mainlineClassification = moveClassifications[currentIndex - 1];
+
+  const currentBranch = branches.find(
+    (branch) => branch.id === currentBranchId,
+  );
+
+  const currentBranchClassification =
+    currentBranchIndex > 0
+      ? currentBranch?.classifications[currentBranchIndex - 1]
+      : null;
+
+  const currentClassification = isOnMainline
+    ? mainlineClassification
+    : currentBranchClassification;
+
+  const currentMove = isOnMainline
+    ? mainlineMoves[currentIndex - 1]
+    : currentBranch?.moves[currentBranchIndex - 1];
+
+  const currentIconClassification = currentClassification
+    ? [
+        {
+          square: currentMove?.to,
+          src: classificationToIcon[currentClassification],
+        },
+      ]
+    : [];
+
+  useEffect(() => {
+    const newSquareColor: Record<string, React.CSSProperties> = {};
+
+    if (currentMove && currentClassification) {
+      const color = classificationToSquareColor[currentClassification];
+
+      if (color) {
+        newSquareColor[currentMove.from] = {
+          background: color,
+        };
+
+        newSquareColor[currentMove.to] = {
+          background: color,
+        };
+      }
+    }
+
+    setSquareColor(newSquareColor);
+  }, [currentMove, currentClassification]);
 
   const engineArrows = useMemo(() => {
     const currentMainlineBestMoves = bestMoves[currentIndex];
@@ -154,6 +259,21 @@ function ChessboardPanel({
     return false;
   }
 
+  function getIconPosition(square: string, boardSize: number) {
+    const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+    const file = square[0];
+    const rank = Number(square[1]);
+
+    const col = files.indexOf(file);
+    const row = 8 - rank;
+
+    const squareSize = boardSize / 8;
+    return {
+      left: `${col * squareSize + squareSize * 0.58}px`,
+      top: `${row * squareSize + squareSize * 0.05}px`,
+    };
+  }
+
   const arrowOptions = {
     color: "#ffaa00",
     secondaryColor: "#4caf50",
@@ -173,8 +293,11 @@ function ChessboardPanel({
     arrowOptions,
     arrows: engineArrows,
     position: fen,
-    squareStyles: optionSquares,
     id: "click-or-drag-to-move",
+    squareStyles: {
+      ...squareColor,
+      ...optionSquares,
+    },
   };
 
   return (
@@ -187,8 +310,19 @@ function ChessboardPanel({
         </span>
       </div>
 
-      <div>
+      <div className={styles.boardWrapper} ref={boardRef}>
         <Chessboard options={chessboardOptions} />
+        {currentIconClassification.map((icon) => {
+          if (!icon.square) return null;
+          return (
+            <img
+              key={icon.square}
+              src={icon.src}
+              className={styles.classificationIcon}
+              style={getIconPosition(icon.square, boardSize)}
+            />
+          );
+        })}
       </div>
 
       <div className={`${styles.playerContainer} ${styles.whitePlayer}`}>
