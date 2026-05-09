@@ -58,6 +58,9 @@ function ChessboardPanel({
   const chessGame = fen ? new Chess(fen) : new Chess();
   const [moveFrom, setMoveFrom] = useState("");
   const [optionSquares, setOptionSquares] = useState({});
+  const [squareColor, setSquareColor] = useState<
+    Record<string, React.CSSProperties>
+  >({});
 
   const [boardSize, setBoardSize] = useState(0);
   const boardRef = useRef<HTMLDivElement | null>(null);
@@ -87,6 +90,15 @@ function ChessboardPanel({
     blunder: blunderIcon,
   };
 
+  const classificationToSquareColor: Record<string, string> = {
+    best: "rgba(129, 182, 76, 0.50)",
+    excellent: "rgba(129, 182, 76, 0.50)",
+    okay: "rgba(129, 182, 76, 0.42)",
+    inaccuracy: "rgba(245, 196, 66, 0.50)",
+    mistake: "rgba(245, 130, 49, 0.50)",
+    blunder: "rgba(214, 79, 79, 0.55)",
+  };
+
   const mainlineClassification = moveClassifications[currentIndex - 1];
 
   const currentBranch = branches.find(
@@ -102,18 +114,38 @@ function ChessboardPanel({
     ? mainlineClassification
     : currentBranchClassification;
 
-  const currentSquare = isOnMainline
-    ? mainlineMoves[currentIndex - 1]?.to
-    : currentBranch?.moves[currentBranchIndex - 1]?.to;
+  const currentMove = isOnMainline
+    ? mainlineMoves[currentIndex - 1]
+    : currentBranch?.moves[currentBranchIndex - 1];
 
   const currentIconClassification = currentClassification
     ? [
         {
-          square: currentSquare,
+          square: currentMove?.to,
           src: classificationToIcon[currentClassification],
         },
       ]
     : [];
+
+  useEffect(() => {
+    const newSquareColor: Record<string, React.CSSProperties> = {};
+
+    if (currentMove && currentClassification) {
+      const color = classificationToSquareColor[currentClassification];
+
+      if (color) {
+        newSquareColor[currentMove.from] = {
+          background: color,
+        };
+
+        newSquareColor[currentMove.to] = {
+          background: color,
+        };
+      }
+    }
+
+    setSquareColor(newSquareColor);
+  }, [currentMove, currentClassification]);
 
   const engineArrows = useMemo(() => {
     const currentMainlineBestMoves = bestMoves[currentIndex];
@@ -261,8 +293,11 @@ function ChessboardPanel({
     arrowOptions,
     arrows: engineArrows,
     position: fen,
-    squareStyles: optionSquares,
     id: "click-or-drag-to-move",
+    squareStyles: {
+      ...squareColor,
+      ...optionSquares,
+    },
   };
 
   return (
