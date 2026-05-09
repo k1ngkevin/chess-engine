@@ -4,6 +4,7 @@ import {
   type Branch,
   type EngineMove,
   type MoveClassification,
+  type GameMove,
 } from "./types.ts";
 import MovesList from "./MovesList.tsx";
 import Analyze from "./Analyze.tsx";
@@ -29,7 +30,7 @@ type SidebarProps = {
   gameState: {
     branches: Branch[];
     bestMoves: (EngineMove[] | null)[];
-    mainlineMoves: string[];
+    mainlineMoves: GameMove[];
     currentIndex: number;
     isOnMainline: boolean;
     currentBranchId: string | null;

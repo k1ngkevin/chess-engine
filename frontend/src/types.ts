@@ -11,6 +11,12 @@ export type EngineEvaluation = {
   value: number;
 };
 
+export type GameMove = {
+  san: string;
+  from: string;
+  to: string;
+}
+
 export type AnalyzeResponse = {
   best_moves: EngineMove[];
   fen: string;

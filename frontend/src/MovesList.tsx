@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import React from "react";
 import styles from "./MovesList.module.css";
-import { type Branch } from "./types.ts";
+import { type Branch, type GameMove } from "./types.ts";
 
 type MovesListProps = {
   navigation: {
@@ -15,7 +15,7 @@ type MovesListProps = {
   };
   gameState: {
     branches: Branch[];
-    mainlineMoves: string[];
+    mainlineMoves: GameMove[];
     currentIndex: number;
     isOnMainline: boolean;
     currentBranchId: string | null;
@@ -77,7 +77,7 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
                         ${isOnMainline && currentIndex === fenIndex ? styles.currentMove : ""}`}
                           onClick={() => gotoMainlineMove(fenIndex)}
                         >
-                          {move}
+                          {move.san}
                         </button>
                       </td>
                     );

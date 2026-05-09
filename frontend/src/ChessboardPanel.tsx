@@ -12,18 +12,19 @@ import {
   type EngineMove,
   type Arrow,
   type MoveClassification,
+  type GameMove,
 } from "./types";
 
 import bestIcon from "./assets/Classification-Icons/best_64x.png";
 import excellentIcon from "./assets/Classification-Icons/excellent_64x.png";
-import goodIcon from "./assets/Classification-Icons/good_64x.png";
+import okayIcon from "./assets/Classification-Icons/okay_64x.png";
 import inaccuracyIcon from "./assets/Classification-Icons/inaccuracy_64x.png";
 import mistakeIcon from "./assets/Classification-Icons/mistake_64x.png";
 import blunderIcon from "./assets/Classification-Icons/blunder_64x.png";
 
 type ChessboardProps = {
   fen: string;
-  mainlineMoves: string[];
+  mainlineMoves: GameMove[];
   onUserMove: (from: string, to: string) => boolean;
   branches: Branch[];
   bestMoves: (EngineMove[] | null)[];
@@ -80,7 +81,7 @@ function ChessboardPanel({
   const classificationToIcon: Record<string, string> = {
     best: bestIcon,
     excellent: excellentIcon,
-    good: goodIcon,
+    okay: okayIcon,
     inaccuracy: inaccuracyIcon,
     mistake: mistakeIcon,
     blunder: blunderIcon,
@@ -103,12 +104,12 @@ function ChessboardPanel({
 
   const currentSquare = isOnMainline
     ? mainlineMoves[currentIndex - 1]
-    : currentBranch?.moves[currentBranchIndex]; // maybe currentBranchIndex - 1
+    : currentBranch?.moves[currentBranchIndex];
 
   const currentIconClassification = currentClassification
     ? [
         {
-          square: currentSquare,
+          square: mainlineMoves[currentIndex - 1].to,
           src: classificationToIcon[currentClassification],
         },
       ]
