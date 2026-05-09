@@ -103,13 +103,13 @@ function ChessboardPanel({
     : currentBranchClassification;
 
   const currentSquare = isOnMainline
-    ? mainlineMoves[currentIndex - 1]
-    : currentBranch?.moves[currentBranchIndex];
+    ? mainlineMoves[currentIndex - 1]?.to
+    : currentBranch?.moves[currentBranchIndex - 1]?.to;
 
   const currentIconClassification = currentClassification
     ? [
         {
-          square: mainlineMoves[currentIndex - 1].to,
+          square: currentSquare,
           src: classificationToIcon[currentClassification],
         },
       ]

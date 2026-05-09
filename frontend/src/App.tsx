@@ -150,7 +150,7 @@ const App = () => {
     setCurrentFen(branch.fens[move]);
 
     if (move > 0) {
-      playSound(branch.moves[move - 1]);
+      playSound(branch.moves[move - 1].san);
     }
   }
 
@@ -454,7 +454,7 @@ const App = () => {
         const newBranch: Branch = {
           id: branchId,
           startIndex: currentIndex,
-          moves: [move.san],
+          moves: [{ san: move.san, from: move.from, to: move.to }],
           fens: [currentFen, game.fen()],
           evaluations: [null],
           bestMoves: [bestMovesArr[currentIndex] ?? null, null],
@@ -484,7 +484,10 @@ const App = () => {
           if (branch.id !== currentBranchId) return branch;
           return {
             ...branch,
-            moves: [...branch.moves.slice(0, nextMoveIndex), move.san],
+            moves: [
+              ...branch.moves.slice(0, nextMoveIndex),
+              { san: move.san, from: move.from, to: move.to },
+            ],
             fens: [...branch.fens.slice(0, nextFenIndex), game.fen()],
             evaluations: [...branch.evaluations.slice(0, nextMoveIndex), null],
             bestMoves: [...branch.bestMoves.slice(0, nextFenIndex), null],

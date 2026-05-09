@@ -122,7 +122,7 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
                                     gotoBranchMove(branch.id, branchFenIndex);
                                   }}
                                 >
-                                  {branchMove}
+                                  {branchMove.san}
                                 </button>
                               </div>
                             );

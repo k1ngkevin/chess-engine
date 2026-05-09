@@ -33,7 +33,7 @@ export type EvaluateBatchResponse = {
 export type Branch = {
   id: string;
   startIndex: number;
-  moves: string[];
+  moves: GameMove[];
   fens: string[];
   evaluations: (EngineEvaluation | null)[];
   bestMoves: (EngineMove[] | null)[];
