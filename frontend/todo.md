@@ -36,6 +36,7 @@
 ~~- arrows behind by one when making new branch~~ <br>
 ~~- add icons + colors for the moves~~<br>
 ~~- change move structure to type with from, to, san~~<br>
+~~- fix: if first move changed, move to branch~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph
@@ -45,8 +46,6 @@
 - flip board feature
 - make the best moves clickable
 - add accuracy rating for each player and elo
-
-~~- fix: if first move changed, move to branch~~<br>
 
 ### classifications
 

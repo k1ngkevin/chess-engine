@@ -127,6 +127,7 @@ const Sidebar = ({
               isOnMainline: isOnMainline,
               currentBranchId: currentBranchId,
               currentBranchIndex: currentBranchIndex,
+              moveClassifications: moveClassification,
             }}
           />
         </div>
