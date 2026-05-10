@@ -32,9 +32,10 @@
 ~~- bug: can't move from branch to mainline~~<br>
 ~~- add move classifications~~<br>
 ~~- add classifications for the branch moves~~<br>
-
-- fix: best moves not loading when on last move of mainline or when user is first moving <br>
-- arrows behind by one when making new branch <br>
+~~- fix: best moves not loading when on last move of mainline or when user is first moving~~ <br>
+~~- arrows behind by one when making new branch~~ <br>
+~~- add icons + colors for the moves~~<br>
+~~- change move structure to type with from, to, san~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph
@@ -45,10 +46,12 @@
 - make the best moves clickable
 - add accuracy rating for each player and elo
 
+~~- fix: if first move changed, move to branch~~<br>
+
 ### classifications
 
 - add book
 - add great
 - add miss
-- add icons + colors for the moves
-- change move structure to type with from, to, san
+- add icons to the imported moves
+- changed sidebar styling for classifications text

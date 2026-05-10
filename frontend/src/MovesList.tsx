@@ -56,11 +56,53 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
     }, {});
   }, [branches]);
 
+  function renderBranchRows(branchesToRender: Branch[]) {
+    return branchesToRender.map((branch) => (
+      <tr key={branch.id} className={styles.branchRow}>
+        <td />
+
+        <td colSpan={2}>
+          <div className={styles.branchLine}>
+            {branch.moves.map((branchMove, branchMoveIndex) => {
+              const branchFenIndex = branchMoveIndex + 1;
+              const plyIndex = branch.startIndex + branchMoveIndex;
+              const moveNumber = Math.floor(plyIndex / 2) + 1;
+              const isWhiteMove = plyIndex % 2 === 0;
+
+              return (
+                <div key={branchMoveIndex}>
+                  <span className={styles.branchMovesNumber}>
+                    {isWhiteMove ? `${moveNumber}. ` : ""}
+                  </span>
+                  <button
+                    className={`${styles.branchMoveButton} ${
+                      !isOnMainline &&
+                      currentBranchId === branch.id &&
+                      currentBranchIndex === branchFenIndex
+                        ? styles.currentMove
+                        : ""
+                    }`}
+                    onClick={() => {
+                      gotoBranchMove(branch.id, branchFenIndex);
+                    }}
+                  >
+                    {branchMove.san}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </td>
+      </tr>
+    ));
+  }
+
   return (
     <div className={styles.movesListContainer}>
       <div className={styles.movesContainer}>
         <table className={styles.movesTable}>
           <tbody>
+            {renderBranchRows(branchesByStartIndex[0] ?? [])}
             {rows.map((row, rowIndex) => (
               <React.Fragment key={rowIndex}>
                 <tr>
@@ -93,44 +135,7 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
 
                   if (branchesAfterThisMove.length === 0) return null;
 
-                  return branchesAfterThisMove.map((branch) => (
-                    <tr key={branch.id} className={styles.branchRow}>
-                      <td />
-
-                      <td colSpan={2}>
-                        <div className={styles.branchLine}>
-                          {branch.moves.map((branchMove, branchMoveIndex) => {
-                            const branchFenIndex = branchMoveIndex + 1;
-
-                            return (
-                              <div>
-                                <span className={styles.branchMovesNumber}>
-                                  {branchMoveIndex % 2 === 0
-                                    ? `${rowIndex + 2 + branchMoveIndex / 2}. `
-                                    : ""}
-                                </span>
-                                <button
-                                  key={branchMoveIndex}
-                                  className={`${styles.branchMoveButton} ${
-                                    !isOnMainline &&
-                                    currentBranchId === branch.id &&
-                                    currentBranchIndex === branchFenIndex
-                                      ? styles.currentMove
-                                      : ""
-                                  }`}
-                                  onClick={() => {
-                                    gotoBranchMove(branch.id, branchFenIndex);
-                                  }}
-                                >
-                                  {branchMove.san}
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </td>
-                    </tr>
-                  ));
+                  return renderBranchRows(branchesAfterThisMove);
                 })}
               </React.Fragment>
             ))}

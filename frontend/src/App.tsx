@@ -410,12 +410,24 @@ const App = () => {
     }
   }
 
+  useEffect(() => {
+    console.log("branches changed:", branches);
+  }, [branches]);
+
   function handleUserMove(from: string, to: string): boolean {
     const game = new Chess(currentFen);
     try {
       const move = game.move({ from, to, promotion: "q" });
       const isAtEndOfMainline = currentIndex === mainlineFens.length - 1;
       setSidebarView("analysis");
+
+      console.log({
+        currentIndex,
+        mainlineFensLength: mainlineFens.length,
+        lastFenIndex: mainlineFens.length - 1,
+        isAtEndOfMainline,
+        isOnMainline,
+      });
       if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
         const playedMoveIndex = nextIndex - 1;
@@ -450,6 +462,7 @@ const App = () => {
       }
 
       if (isOnMainline) {
+        console.log("CREATING BRANCH");
         const branchId = crypto.randomUUID();
         const newBranch: Branch = {
           id: branchId,
