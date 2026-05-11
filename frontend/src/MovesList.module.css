@@ -52,7 +52,7 @@
 .movesButton {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 
   width: 100%;
   border: none;
@@ -98,7 +98,17 @@
   gap: 6px;
 }
 
+.branchMoveItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .branchMoveButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
   border: none;
   background: transparent;
   color: #aaa;

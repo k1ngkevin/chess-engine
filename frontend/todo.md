@@ -37,6 +37,7 @@
 ~~- add icons + colors for the moves~~<br>
 ~~- change move structure to type with from, to, san~~<br>
 ~~- fix: if first move changed, move to branch~~<br>
+~~- add icons to the imported moves~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph
@@ -52,5 +53,4 @@
 - add book
 - add great
 - add miss
-- add icons to the imported moves
 - changed sidebar styling for classifications text

@@ -75,9 +75,12 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
               const plyIndex = branch.startIndex + branchMoveIndex;
               const moveNumber = Math.floor(plyIndex / 2) + 1;
               const isWhiteMove = plyIndex % 2 === 0;
+              const currentBranch = branches.find(
+                (branch) => branch.id === currentBranchId,
+              );
 
               return (
-                <div key={branchMoveIndex}>
+                <div key={branchMoveIndex} className={styles.branchMoveItem}>
                   <span className={styles.branchMovesNumber}>
                     {isWhiteMove ? `${moveNumber}. ` : ""}
                   </span>
@@ -93,6 +96,17 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
                       gotoBranchMove(branch.id, branchFenIndex);
                     }}
                   >
+                    <img
+                      key={branchMoveIndex}
+                      src={
+                        classificationToIcon[
+                          currentBranch?.classifications[branchMoveIndex]
+                            ? currentBranch?.classifications[branchMoveIndex]
+                            : ""
+                        ]
+                      }
+                      className={styles.classificationIcon}
+                    />
                     {branchMove.san}
                   </button>
                 </div>
