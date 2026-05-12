@@ -38,13 +38,13 @@
 ~~- change move structure to type with from, to, san~~<br>
 ~~- fix: if first move changed, move to branch~~<br>
 ~~- add icons to the imported moves~~<br>
+~~- flip board feature~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph
 - add loading bar while its generating the analysis array
 - add a notification for errors
 - have storage of the state on user refresh
-- flip board feature
 - make the best moves clickable
 - add accuracy rating for each player and elo
 - for best moves make it dropdown max 1 line
