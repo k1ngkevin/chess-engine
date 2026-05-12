@@ -9,6 +9,10 @@ import {
 import MovesList from "./MovesList.tsx";
 import Analyze from "./Analyze.tsx";
 import PgnImportForm from "./PgnImportForm.tsx";
+import {
+  classificationToIcon,
+  classificationToSquareColor,
+} from "./classifications";
 import { IconArrowLeft } from "@tabler/icons-react";
 
 type SidebarProps = {
@@ -78,10 +82,48 @@ const Sidebar = ({
     (branch) => branch.id === currentBranchId,
   );
 
+  const currentMainlineClassification =
+    moveClassification[currentIndex - 1] ?? "";
+
   const currentBranchClassification =
     currentBranchIndex > 0
       ? currentBranch?.classifications[currentBranchIndex - 1]
-      : null;
+      : "";
+
+  const currentMainlineSan = mainlineMoves[currentIndex - 1]?.san ?? "";
+  const currentBranchSan =
+    currentBranch?.moves[currentBranchIndex - 1].san ?? "";
+  const currentMoveSan = isOnMainline ? currentMainlineSan : currentBranchSan;
+
+  const currentMoveClassification = isOnMainline
+    ? currentMainlineClassification
+    : currentBranchClassification;
+
+  const currentMoveText =
+    currentMoveSan != "" && currentMoveClassification != ""
+      ? `${currentMoveSan} is ${currentMoveClassification}`
+      : "";
+
+  const currentClassification = isOnMainline
+    ? currentMainlineClassification
+    : currentBranchClassification;
+
+  const currentMove = isOnMainline
+    ? mainlineMoves[currentIndex - 1]
+    : currentBranch?.moves[currentBranchIndex - 1];
+
+  const currentIconClassification = currentClassification
+    ? [
+        {
+          square: currentMove?.to,
+          src: classificationToIcon[currentClassification],
+        },
+      ]
+    : [];
+
+  const currentClassificationColor = currentClassification
+    ? classificationToSquareColor[currentClassification]
+    : "white";
 
   return (
     <div className={styles.sidebarContainer}>
@@ -111,6 +153,21 @@ const Sidebar = ({
         </div>
       )}
       {sidebarView === "analysis" && (
+        <div className={styles.moveTextContainer}>
+          {currentIconClassification.map((icon) => {
+            if (!icon.square) return null;
+            return (
+              <img
+                key={icon.square}
+                src={icon.src}
+                className={styles.classificationIconText}
+              />
+            );
+          })}
+          <p style={{ color: currentClassificationColor }}>{currentMoveText}</p>
+        </div>
+      )}
+      {sidebarView === "analysis" && (
         <div className={styles.movesListWrapper}>
           <MovesList
             navigation={{
@@ -135,15 +192,6 @@ const Sidebar = ({
           />
         </div>
       )}
-      <div>
-        {isOnMainline ? (
-          <p style={{ color: "white" }}>
-            {moveClassification[currentIndex - 1]}
-          </p>
-        ) : (
-          <p style={{ color: "white" }}>{currentBranchClassification ?? ""}</p>
-        )}
-      </div>
     </div>
   );
 };

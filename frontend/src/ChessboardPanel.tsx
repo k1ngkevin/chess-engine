@@ -18,7 +18,7 @@ import {
 import {
   classificationToSquareColor,
   classificationToIcon,
-} from "./classifciations";
+} from "./classifications";
 
 type ChessboardProps = {
   fen: string;

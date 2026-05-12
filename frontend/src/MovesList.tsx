@@ -6,7 +6,7 @@ import {
   type GameMove,
   type MoveClassification,
 } from "./types.ts";
-import { classificationToIcon } from "./classifciations.ts";
+import { classificationToIcon } from "./classifications.ts";
 import { IconRotate } from "@tabler/icons-react";
 
 type MovesListProps = {

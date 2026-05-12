@@ -40,6 +40,7 @@
 ~~- add icons to the imported moves~~<br>
 ~~- flip board feature~~<br>
 ~~- bug: when on mainline branch icons on sidebar don't show~~<br>
+~~- changed sidebar styling for classifications text~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph
@@ -55,4 +56,3 @@
 - add book
 - add great
 - add miss
-- changed sidebar styling for classifications text
