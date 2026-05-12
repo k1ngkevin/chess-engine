@@ -420,13 +420,6 @@ const App = () => {
       const isAtEndOfMainline = currentIndex === mainlineFens.length - 1;
       setSidebarView("analysis");
 
-      console.log({
-        currentIndex,
-        mainlineFensLength: mainlineFens.length,
-        lastFenIndex: mainlineFens.length - 1,
-        isAtEndOfMainline,
-        isOnMainline,
-      });
       if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
         const playedMoveIndex = nextIndex - 1;
@@ -461,7 +454,6 @@ const App = () => {
       }
 
       if (isOnMainline) {
-        console.log("CREATING BRANCH");
         const branchId = crypto.randomUUID();
         const newBranch: Branch = {
           id: branchId,

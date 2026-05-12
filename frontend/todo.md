@@ -39,6 +39,7 @@
 ~~- fix: if first move changed, move to branch~~<br>
 ~~- add icons to the imported moves~~<br>
 ~~- flip board feature~~<br>
+~~- bug: when on mainline branch icons on sidebar don't show~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph
@@ -48,8 +49,6 @@
 - make the best moves clickable
 - add accuracy rating for each player and elo
 - for best moves make it dropdown max 1 line
-
-**- bug: when on mainline branch icons on sidebar don't show**
 
 ### classifications
 
