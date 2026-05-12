@@ -26,6 +26,7 @@ type SidebarProps = {
     onBeginning: () => void;
     onEnd: () => void;
     returnToMainline: () => void;
+    onFlipBoard: () => void;
   };
   gameState: {
     branches: Branch[];
@@ -58,6 +59,7 @@ const Sidebar = ({
     onBeginning,
     onEnd,
     returnToMainline,
+    onFlipBoard: onHandleClick,
   } = navigation;
   const {
     branches,
@@ -119,6 +121,7 @@ const Sidebar = ({
               onBeginning: onBeginning,
               onEnd: onEnd,
               returnToMainline: returnToMainline,
+              onFlipBoard: onHandleClick,
             }}
             gameState={{
               branches: branches,

@@ -53,6 +53,9 @@ const App = () => {
     "import",
   );
 
+  const [boardOrientation, setBoardOrientation] = useState<"white" | "black">(
+    "white",
+  );
   const [whiteUsername, setWhiteUsername] = useState("White");
   const [whiteElo, setWhiteElo] = useState<number>();
   const [blackUsername, setBlackUsername] = useState("Black");
@@ -409,10 +412,6 @@ const App = () => {
       isImportingRef.current = false;
     }
   }
-
-  useEffect(() => {
-    console.log("branches changed:", branches);
-  }, [branches]);
 
   function handleUserMove(from: string, to: string): boolean {
     const game = new Chess(currentFen);
@@ -784,6 +783,10 @@ const App = () => {
     return "blunder";
   }
 
+  function onFlipBoard() {
+    setBoardOrientation((prev) => (prev === "white" ? "black" : "white"));
+  }
+
   return (
     <div className="container">
       <div className="boardContainer">
@@ -794,6 +797,7 @@ const App = () => {
           currentBranchId={currentBranchId}
           isOnMainline={isOnMainline}
           playedMovesEvaluation={playedMovesEval}
+          boardOrientation={boardOrientation}
         />
         <ChessboardPanel
           fen={currentFen}
@@ -806,6 +810,7 @@ const App = () => {
           currentBranchId={currentBranchId}
           currentBranchIndex={currentBranchIndex}
           moveClassifications={moveClassifications}
+          boardOrientation={boardOrientation}
           playerInfo={{
             whiteUsername: whiteUsername,
             blackUsername: blackUsername,
@@ -830,6 +835,7 @@ const App = () => {
             onBeginning: gotoBeginning,
             onEnd: gotoEnd,
             returnToMainline: returnToMainline,
+            onFlipBoard: onFlipBoard,
           }}
           gameState={{
             branches: branches,

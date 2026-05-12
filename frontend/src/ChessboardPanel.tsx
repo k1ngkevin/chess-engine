@@ -31,6 +31,7 @@ type ChessboardProps = {
   currentBranchId: string | null;
   currentBranchIndex: number;
   moveClassifications: MoveClassification[];
+  boardOrientation: "white" | "black";
   playerInfo: {
     whiteUsername: string;
     blackUsername: string;
@@ -50,6 +51,7 @@ function ChessboardPanel({
   currentBranchId,
   currentBranchIndex,
   moveClassifications,
+  boardOrientation,
   playerInfo,
 }: ChessboardProps) {
   const { whiteUsername, blackUsername, whiteElo, blackElo } = playerInfo;
@@ -106,6 +108,32 @@ function ChessboardPanel({
         },
       ]
     : [];
+
+  const topPlayer =
+    boardOrientation === "white"
+      ? {
+          username: blackUsername,
+          elo: blackElo,
+          icon: "/src/assets/chess_black_king.png",
+        }
+      : {
+          username: whiteUsername,
+          elo: whiteElo,
+          icon: "/src/assets/chess_white_king.png",
+        };
+
+  const bottomPlayer =
+    boardOrientation === "white"
+      ? {
+          username: whiteUsername,
+          elo: whiteElo,
+          icon: "/src/assets/chess_white_king.png",
+        }
+      : {
+          username: blackUsername,
+          elo: blackElo,
+          icon: "/src/assets/chess_black_king.png",
+        };
 
   useEffect(() => {
     const newSquareColor: Record<string, React.CSSProperties> = {};
@@ -239,15 +267,25 @@ function ChessboardPanel({
     return false;
   }
 
-  function getIconPosition(square: string, boardSize: number) {
+  function getIconPosition(
+    square: string,
+    boardSize: number,
+    boardOrientation: "white" | "black",
+  ) {
     const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
     const file = square[0];
     const rank = Number(square[1]);
 
-    const col = files.indexOf(file);
-    const row = 8 - rank;
+    let col = files.indexOf(file);
+    let row = 8 - rank;
+
+    if (boardOrientation === "black") {
+      col = 7 - col;
+      row = 7 - row;
+    }
 
     const squareSize = boardSize / 8;
+
     return {
       left: `${col * squareSize + squareSize * 0.58}px`,
       top: `${row * squareSize + squareSize * 0.05}px`,
@@ -271,6 +309,7 @@ function ChessboardPanel({
     onPieceDrop,
     onSquareClick,
     arrowOptions,
+    boardOrientation,
     arrows: engineArrows,
     position: fen,
     id: "click-or-drag-to-move",
@@ -282,11 +321,11 @@ function ChessboardPanel({
 
   return (
     <div className={styles.chessboardContainer}>
-      <div className={`${styles.playerContainer} ${styles.blackPlayer}`}>
-        <img src="src/assets/chess_black_king.png" alt="chess king piece" />
+      <div className={`${styles.playerContainer} ${styles.topPlayer}`}>
+        <img src={topPlayer.icon} alt="chess king piece" />
         <span className={styles.playerText}>
-          {blackUsername}
-          {blackElo !== undefined ? ` (${blackElo})` : ""}
+          {topPlayer.username}
+          {topPlayer.elo !== undefined ? ` (${topPlayer.elo})` : ""}
         </span>
       </div>
 
@@ -299,17 +338,17 @@ function ChessboardPanel({
               key={icon.square}
               src={icon.src}
               className={styles.classificationIcon}
-              style={getIconPosition(icon.square, boardSize)}
+              style={getIconPosition(icon.square, boardSize, boardOrientation)}
             />
           );
         })}
       </div>
 
-      <div className={`${styles.playerContainer} ${styles.whitePlayer}`}>
-        <img src="src/assets/chess_white_king.png" alt="chess king piece" />
+      <div className={`${styles.playerContainer} ${styles.bottomPlayer}`}>
+        <img src={bottomPlayer.icon} alt="chess king piece" />
         <span className={styles.playerText}>
-          {whiteUsername}
-          {whiteElo !== undefined ? ` (${whiteElo})` : ""}
+          {bottomPlayer.username}
+          {bottomPlayer.elo !== undefined ? ` (${bottomPlayer.elo})` : ""}
         </span>
       </div>
     </div>
