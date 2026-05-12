@@ -188,7 +188,6 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
         <button
           type="button"
           className={styles.arrowButton}
-          style={{ padding: "10px 28px" }}
           onClick={() => onPrevMove()}
         >
           {"<"}
@@ -196,7 +195,6 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
         <button
           type="button"
           className={styles.arrowButton}
-          style={{ padding: "10px 28px" }}
           onClick={() => onNextMove()}
         >
           {">"}
