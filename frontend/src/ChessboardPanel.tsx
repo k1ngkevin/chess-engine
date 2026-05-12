@@ -267,15 +267,25 @@ function ChessboardPanel({
     return false;
   }
 
-  function getIconPosition(square: string, boardSize: number) {
+  function getIconPosition(
+    square: string,
+    boardSize: number,
+    boardOrientation: "white" | "black",
+  ) {
     const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
     const file = square[0];
     const rank = Number(square[1]);
 
-    const col = files.indexOf(file);
-    const row = 8 - rank;
+    let col = files.indexOf(file);
+    let row = 8 - rank;
+
+    if (boardOrientation === "black") {
+      col = 7 - col;
+      row = 7 - row;
+    }
 
     const squareSize = boardSize / 8;
+
     return {
       left: `${col * squareSize + squareSize * 0.58}px`,
       top: `${row * squareSize + squareSize * 0.05}px`,
@@ -328,7 +338,7 @@ function ChessboardPanel({
               key={icon.square}
               src={icon.src}
               className={styles.classificationIcon}
-              style={getIconPosition(icon.square, boardSize)}
+              style={getIconPosition(icon.square, boardSize, boardOrientation)}
             />
           );
         })}

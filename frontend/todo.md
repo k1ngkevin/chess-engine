@@ -49,6 +49,8 @@
 - add accuracy rating for each player and elo
 - for best moves make it dropdown max 1 line
 
+**- bug: when on mainline branch icons on sidebar don't show**
+
 ### classifications
 
 - add book

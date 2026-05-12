@@ -105,13 +105,7 @@ const EvaluationBar = ({
           style={{ height: `${whitePercent}%` }}
         ></div>
 
-        <p
-          // className={
-          //   value > 0 ? styles.evaluationTextWhite : styles.evaluationTextBlack
-          // }
-          className={styles.evaluationText}
-          style={evalTextStyle}
-        >
+        <p className={styles.evaluationText} style={evalTextStyle}>
           {type === "mate_over"
             ? "M0"
             : type === "mate"

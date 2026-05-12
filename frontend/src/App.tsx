@@ -413,10 +413,6 @@ const App = () => {
     }
   }
 
-  useEffect(() => {
-    console.log("branches changed:", branches);
-  }, [branches]);
-
   function handleUserMove(from: string, to: string): boolean {
     const game = new Chess(currentFen);
     try {
