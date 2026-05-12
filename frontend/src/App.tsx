@@ -801,6 +801,7 @@ const App = () => {
           currentBranchId={currentBranchId}
           isOnMainline={isOnMainline}
           playedMovesEvaluation={playedMovesEval}
+          boardOrientation={boardOrientation}
         />
         <ChessboardPanel
           fen={currentFen}

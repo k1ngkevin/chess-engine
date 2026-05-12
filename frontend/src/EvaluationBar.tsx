@@ -9,6 +9,7 @@ interface EvaluationProps {
   currentBranchId: string | null;
   isOnMainline: boolean;
   playedMovesEvaluation: (EngineEvaluation | null)[];
+  boardOrientation: "white" | "black";
 }
 
 const EvaluationBar = ({
@@ -18,6 +19,7 @@ const EvaluationBar = ({
   currentBranchId,
   isOnMainline,
   playedMovesEvaluation,
+  boardOrientation,
 }: EvaluationProps) => {
   const [cachedEvaluation, setCachedEvaluation] =
     useState<EngineEvaluation | null>(null);
@@ -27,6 +29,7 @@ const EvaluationBar = ({
   const currentBranch = currentBranchId
     ? branches.find((branch) => branch.id === currentBranchId)
     : null;
+
   const currentBranchEvaluation =
     currentBranch?.evaluations[currentBranchIndex - 1] ?? null;
 
@@ -79,18 +82,35 @@ const EvaluationBar = ({
   const value = displayedEvaluation?.value ?? 0;
   const whitePercent = convertEvalToPercent(type, value);
 
+  const evalTextStyle =
+    boardOrientation === "white" && value > 0
+      ? { bottom: "8px", color: "black" }
+      : boardOrientation === "white" && value < 0
+        ? { top: "8px", color: "white" }
+        : boardOrientation === "black" && value > 0
+          ? { top: "8px", color: "black" }
+          : { bottom: "8px", color: "white" };
+
   return (
     <>
-      <div className={styles.evaluationBar}>
+      <div
+        className={
+          boardOrientation === "white"
+            ? styles.evaluationBarWhite
+            : styles.evaluationBarBlack
+        }
+      >
         <div
           className={styles.evaluationWhite}
           style={{ height: `${whitePercent}%` }}
         ></div>
 
         <p
-          className={
-            value > 0 ? styles.evaluationTextWhite : styles.evaluationTextBlack
-          }
+          // className={
+          //   value > 0 ? styles.evaluationTextWhite : styles.evaluationTextBlack
+          // }
+          className={styles.evaluationText}
+          style={evalTextStyle}
         >
           {type === "mate_over"
             ? "M0"

@@ -1,4 +1,4 @@
-.evaluationBar {
+.evaluationBarWhite {
   width: 50px;
   background-color: black;
   overflow: hidden;
@@ -7,6 +7,18 @@
   display: flex;
   flex-direction: column-reverse;
 }
+
+
+.evaluationBarBlack {
+  width: 50px;
+  background-color: black;
+  overflow: hidden;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+}
+
 
 .evaluationWhite {
   width: 100%;
@@ -36,4 +48,17 @@
   font-size: 16px;
   font-weight: bold;
   margin: 0;
+}
+
+.evaluationText{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+
+  /* top: 8px;
+  color: white; */
 }
