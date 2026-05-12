@@ -28,6 +28,7 @@ const PgnImportForm = ({
       <button
         type="button"
         className={styles.analyzePgnButton}
+        disabled={isImporting}
         onClick={() => onImportPgn(pgn)}
       >
         <IconSearch stroke={1.75} />

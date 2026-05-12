@@ -5,6 +5,7 @@ import {
   type EngineMove,
   type MoveClassification,
   type GameMove,
+  type ImportProgress,
 } from "./types.ts";
 import MovesList from "./MovesList.tsx";
 import Analyze from "./Analyze.tsx";
@@ -20,6 +21,7 @@ type SidebarProps = {
     pgn: string;
     setPgn: React.Dispatch<React.SetStateAction<string>>;
     isImporting: boolean;
+    importProgress: ImportProgress | null;
     sidebarView: "import" | "analysis";
   };
   navigation: {
@@ -48,13 +50,46 @@ type SidebarProps = {
   };
 };
 
+type ImportProgressBarProps = {
+  progress: ImportProgress;
+};
+
+const ImportProgressBar = ({ progress }: ImportProgressBarProps) => {
+  const progressPercent =
+    progress.total > 0
+      ? Math.round((progress.current / progress.total) * 100)
+      : 0;
+
+  return (
+    <div className={styles.importProgressContainer}>
+      <div className={styles.importProgressHeader}>
+        <span>{progress.label}</span>
+        <span>{progressPercent}%</span>
+      </div>
+      <div
+        className={styles.importProgressTrack}
+        aria-label="PGN import analysis progress"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progressPercent}
+        role="progressbar"
+      >
+        <div
+          className={styles.importProgressFill}
+          style={{ width: `${progressPercent}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
 const Sidebar = ({
   pgnState,
   navigation,
   gameState,
   actions,
 }: SidebarProps) => {
-  const { pgn, setPgn, isImporting, sidebarView } = pgnState;
+  const { pgn, setPgn, isImporting, importProgress, sidebarView } = pgnState;
   const {
     onNextMove,
     onPrevMove,
@@ -139,6 +174,9 @@ const Sidebar = ({
           isImporting={isImporting}
           onImportPgn={async () => await onImportPgn(pgn)}
         />
+      )}
+      {sidebarView === "import" && isImporting && importProgress && (
+        <ImportProgressBar progress={importProgress} />
       )}
       {sidebarView === "analysis" && (
         <div className={styles.analyzeWrapper}>

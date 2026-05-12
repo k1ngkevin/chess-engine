@@ -41,10 +41,10 @@
 ~~- flip board feature~~<br>
 ~~- bug: when on mainline branch icons on sidebar don't show~~<br>
 ~~- changed sidebar styling for classifications text~~<br>
+~~- add loading bar while its generating the analysis array~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph
-- add loading bar while its generating the analysis array
 - add a notification for errors
 - have storage of the state on user refresh
 - make the best moves clickable

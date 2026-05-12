@@ -17,6 +17,12 @@ export type GameMove = {
   to: string;
 }
 
+export type ImportProgress = {
+  current: number;
+  total: number;
+  label: string;
+};
+
 export type AnalyzeResponse = {
   best_moves: EngineMove[];
   fen: string;

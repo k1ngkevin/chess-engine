@@ -3,7 +3,6 @@ import ChessboardPanel from "./ChessboardPanel";
 import { Chess } from "chess.js";
 import Sidebar from "./Sidebar";
 import EvaluationBar from "./EvaluationBar";
-import { type Branch } from "./types";
 import {
   analyzePosition,
   analyzeFenBatch,
@@ -21,6 +20,8 @@ import {
   type EngineEvaluation,
   type MoveClassification,
   type GameMove,
+  type Branch,
+  type ImportProgress,
 } from "./types";
 import "./App.css";
 
@@ -48,6 +49,9 @@ const App = () => {
 
   const [pgn, setPgn] = useState("");
   const [isImporting, setIsImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState<ImportProgress | null>(
+    null,
+  );
   const isImportingRef = useRef(false);
   const [sidebarView, setSidebarView] = useState<"import" | "analysis">(
     "import",
@@ -263,6 +267,8 @@ const App = () => {
     fens: string[],
     chunkSize = 3,
   ) {
+    const totalMoves = Math.max(fens.length - 1 - startIndex, 0);
+
     try {
       for (let i = startIndex; i < fens.length - 1; i += chunkSize) {
         const beforeChunk = fens.slice(
@@ -342,10 +348,26 @@ const App = () => {
 
           return classificationsCopy;
         });
+
+        const completedMoves = Math.min(
+          i + beforeChunk.length - startIndex,
+          totalMoves,
+        );
+        setImportProgress({
+          current: completedMoves,
+          total: totalMoves,
+          label: `Analyzing moves ${completedMoves} / ${totalMoves}`,
+        });
       }
 
       const lastFenIndex = fens.length - 1;
       if (lastFenIndex >= startIndex) {
+        setImportProgress({
+          current: totalMoves,
+          total: totalMoves,
+          label: "Finalizing analysis",
+        });
+
         const finalPositionBestMoves = await analyzeFen(fens[lastFenIndex]);
         if (finalPositionBestMoves !== null) {
           setBestMovesArr((prev) => {
@@ -354,6 +376,12 @@ const App = () => {
             return analyzeCopy;
           });
         }
+
+        setImportProgress({
+          current: totalMoves,
+          total: totalMoves,
+          label: "Analysis complete",
+        });
       }
     } catch (error) {
       console.error("background analysis failed:", error);
@@ -386,6 +414,12 @@ const App = () => {
       getUsernameAndElo(pgn);
 
       const history = temp.history({ verbose: true });
+      setImportProgress({
+        current: 0,
+        total: history.length,
+        label: "Preparing analysis",
+      });
+
       const replay = new Chess();
       const fens: string[] = [replay.fen()];
 
@@ -407,6 +441,7 @@ const App = () => {
       setSidebarView("analysis");
     } catch (error) {
       console.error("Import failed:", error);
+      setImportProgress(null);
     } finally {
       setIsImporting(false);
       isImportingRef.current = false;
@@ -724,6 +759,7 @@ const App = () => {
     setIsOnMainline(true);
     setCurrentBranchId(null);
     setCurrentBranchIndex(-1);
+    setImportProgress(null);
     setSidebarView("import");
   }
 
@@ -817,6 +853,7 @@ const App = () => {
             pgn: pgn,
             setPgn: setPgn,
             isImporting: isImporting,
+            importProgress: importProgress,
             sidebarView: sidebarView,
           }}
           navigation={{

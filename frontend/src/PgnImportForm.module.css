@@ -36,3 +36,13 @@
   background-color: #444444;
   border-color: #5a5a5a;
 }
+
+.analyzePgnButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.analyzePgnButton:disabled:hover {
+  background-color: #3a3a3a;
+  border-color: #4a4a4a;
+}
