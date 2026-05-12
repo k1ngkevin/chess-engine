@@ -7,6 +7,7 @@ import {
   type MoveClassification,
 } from "./types.ts";
 import { classificationToIcon } from "./classifciations.ts";
+import { IconRotate } from "@tabler/icons-react";
 
 type MovesListProps = {
   navigation: {
@@ -17,6 +18,7 @@ type MovesListProps = {
     onBeginning: () => void;
     onEnd: () => void;
     returnToMainline: () => void;
+    onFlipBoard: () => void;
   };
   gameState: {
     branches: Branch[];
@@ -37,6 +39,7 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
     gotoBranchMove,
     onBeginning,
     onEnd,
+    onFlipBoard,
   } = navigation;
   const {
     branches,
@@ -204,6 +207,13 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
           onClick={() => onEnd()}
         >
           {">>"}
+        </button>
+        <button
+          type="button"
+          className={styles.arrowButton}
+          onClick={() => onFlipBoard()}
+        >
+          <IconRotate stroke={1.75} />
         </button>
       </div>
     </div>

@@ -34,11 +34,11 @@
   border-radius: 8px;
 }
 
-.whitePlayer {
+.bottomPlayer {
   bottom: -60px;
 }
 
-.blackPlayer {
+.topPlayer {
   top: -60px;
 }
 

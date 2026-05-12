@@ -47,6 +47,7 @@
 - flip board feature
 - make the best moves clickable
 - add accuracy rating for each player and elo
+- for best moves make it dropdown max 1 line
 
 ### classifications
 
