@@ -53,6 +53,7 @@
 
 ### classifications
 
+- list of move classifications for each player on report tab
 - add book
 - add great
 - add miss

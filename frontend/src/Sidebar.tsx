@@ -6,13 +6,14 @@ import {
   type MoveClassification,
   type GameMove,
   type ImportProgress,
+  type SidebarView,
 } from "./types.ts";
 import MovesList from "./MovesList.tsx";
 import Analyze from "./Analyze.tsx";
 import PgnImportForm from "./PgnImportForm.tsx";
 import {
   classificationToIcon,
-  classificationToSquareColor,
+  classificationToTextColor,
 } from "./classifications";
 import { IconArrowLeft } from "@tabler/icons-react";
 
@@ -22,7 +23,8 @@ type SidebarProps = {
     setPgn: React.Dispatch<React.SetStateAction<string>>;
     isImporting: boolean;
     importProgress: ImportProgress | null;
-    sidebarView: "import" | "analysis";
+    sidebarView: SidebarView;
+    setSidebarView: React.Dispatch<React.SetStateAction<SidebarView>>;
   };
   navigation: {
     onNextMove: () => void;
@@ -89,7 +91,14 @@ const Sidebar = ({
   gameState,
   actions,
 }: SidebarProps) => {
-  const { pgn, setPgn, isImporting, importProgress, sidebarView } = pgnState;
+  const {
+    pgn,
+    setPgn,
+    isImporting,
+    importProgress,
+    sidebarView,
+    setSidebarView,
+  } = pgnState;
   const {
     onNextMove,
     onPrevMove,
@@ -157,16 +166,17 @@ const Sidebar = ({
     : [];
 
   const currentClassificationColor = currentClassification
-    ? classificationToSquareColor[currentClassification]
+    ? classificationToTextColor[currentClassification]
     : "white";
 
   return (
     <div className={styles.sidebarContainer}>
-      {sidebarView === "analysis" && (
+      {(sidebarView === "analysis" || sidebarView === "report") && (
         <button className={styles.backButton} onClick={() => onBackButton()}>
           <IconArrowLeft stroke={1.75} />
         </button>
       )}
+
       {sidebarView === "import" && (
         <PgnImportForm
           pgn={pgn}
@@ -175,9 +185,34 @@ const Sidebar = ({
           onImportPgn={async () => await onImportPgn(pgn)}
         />
       )}
+
       {sidebarView === "import" && isImporting && importProgress && (
         <ImportProgressBar progress={importProgress} />
       )}
+
+      {(sidebarView === "analysis" || sidebarView === "report") && (
+        <div className={styles.tabButtonGroup}>
+          <button
+            className={`${styles.tabButton} ${
+              sidebarView === "report" ? styles.activeTabButton : ""
+            }`}
+            onClick={() => setSidebarView("report")}
+          >
+            Report
+          </button>
+          <button
+            className={`${styles.tabButton} ${
+              sidebarView === "analysis" ? styles.activeTabButton : ""
+            }`}
+            onClick={() => setSidebarView("analysis")}
+          >
+            Analysis
+          </button>
+        </div>
+      )}
+
+      {}
+
       {sidebarView === "analysis" && (
         <div className={styles.analyzeWrapper}>
           <Analyze
@@ -190,7 +225,8 @@ const Sidebar = ({
           />
         </div>
       )}
-      {sidebarView === "analysis" && (
+
+      {(sidebarView === "analysis" || sidebarView === "report") && (
         <div className={styles.moveTextContainer}>
           {currentIconClassification.map((icon) => {
             if (!icon.square) return null;
@@ -205,6 +241,7 @@ const Sidebar = ({
           <p style={{ color: currentClassificationColor }}>{currentMoveText}</p>
         </div>
       )}
+
       {sidebarView === "analysis" && (
         <div className={styles.movesListWrapper}>
           <MovesList

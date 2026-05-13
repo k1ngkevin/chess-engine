@@ -60,3 +60,5 @@ export type MoveClassification =
   "mistake" |
   "blunder" |
   null
+
+export type SidebarView = "import" | "report" | "analysis"

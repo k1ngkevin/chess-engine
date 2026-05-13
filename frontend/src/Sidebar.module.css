@@ -100,3 +100,45 @@
   color: white;
   font-weight: bold;
 }
+
+.tabButtonGroup {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+  gap: 6px;
+}
+
+.tabButton {
+  flex: 1;
+  height: 42px;
+
+  border: none;
+  border-bottom: 2px solid #3a3a3a;
+  border-radius: 6px 6px 0 0;
+
+  background: transparent;
+  color: #d8d8d8;
+
+  cursor: pointer;
+
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.tabButton:hover {
+  background-color: #2a2a2a;
+  border-bottom-color: #666;
+  color: #ffffff;
+}
+
+.activeTabButton {
+  border-bottom-color: #6a6a6a;
+  color: #ffffff;
+  background-color: #262626;
+}

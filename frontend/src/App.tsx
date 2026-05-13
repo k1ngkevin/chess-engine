@@ -22,6 +22,7 @@ import {
   type GameMove,
   type Branch,
   type ImportProgress,
+  type SidebarView,
 } from "./types";
 import "./App.css";
 
@@ -53,9 +54,7 @@ const App = () => {
     null,
   );
   const isImportingRef = useRef(false);
-  const [sidebarView, setSidebarView] = useState<"import" | "analysis">(
-    "import",
-  );
+  const [sidebarView, setSidebarView] = useState<SidebarView>("import");
 
   const [boardOrientation, setBoardOrientation] = useState<"white" | "black">(
     "white",
@@ -453,7 +452,10 @@ const App = () => {
     try {
       const move = game.move({ from, to, promotion: "q" });
       const isAtEndOfMainline = currentIndex === mainlineFens.length - 1;
-      setSidebarView("analysis");
+
+      if (sidebarView === "import") {
+        setSidebarView("analysis");
+      }
 
       if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
@@ -855,6 +857,7 @@ const App = () => {
             isImporting: isImporting,
             importProgress: importProgress,
             sidebarView: sidebarView,
+            setSidebarView: setSidebarView,
           }}
           navigation={{
             onNextMove: nextMove,
