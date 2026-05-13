@@ -58,7 +58,17 @@ export type MoveClassification =
   "okay" |
   "inaccuracy" |
   "mistake" |
-  "blunder" |
+  "blunder"
+
+export type NullableMoveClassification = 
+  "best" |
+  "excellent" |
+  "okay" |
+  "inaccuracy" |
+  "mistake" |
+  "blunder" | 
   null
+
+export type ClassificationCounts = Record<MoveClassification, number>;
 
 export type SidebarView = "import" | "report" | "analysis"

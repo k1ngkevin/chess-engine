@@ -3,10 +3,12 @@ import styles from "./Sidebar.module.css";
 import {
   type Branch,
   type EngineMove,
-  type MoveClassification,
+  type NullableMoveClassification,
+  type ClassificationCounts,
   type GameMove,
   type ImportProgress,
   type SidebarView,
+  type MoveClassification,
 } from "./types.ts";
 import MovesList from "./MovesList.tsx";
 import Analyze from "./Analyze.tsx";
@@ -16,6 +18,7 @@ import {
   classificationToTextColor,
 } from "./classifications";
 import { IconArrowLeft } from "@tabler/icons-react";
+import ClassificationStats from "./ClassificationStats.tsx";
 
 type SidebarProps = {
   pgnState: {
@@ -44,7 +47,7 @@ type SidebarProps = {
     isOnMainline: boolean;
     currentBranchId: string | null;
     currentBranchIndex: number;
-    moveClassification: MoveClassification[];
+    moveClassification: NullableMoveClassification[];
   };
   actions: {
     onImportPgn: (pgn: string) => Promise<void>;
@@ -169,6 +172,40 @@ const Sidebar = ({
     ? classificationToTextColor[currentClassification]
     : "white";
 
+  const whiteClassifications = moveClassification.filter(
+    (_, idx) => idx % 2 === 0,
+  );
+  const blackClassifications = moveClassification.filter(
+    (_, idx) => idx % 2 !== 0,
+  );
+
+  function countClassification(
+    arr: NullableMoveClassification[],
+    targetClassification: MoveClassification,
+  ): number {
+    return arr.filter(
+      (classification) => classification === targetClassification,
+    ).length;
+  }
+
+  const whiteCounts: ClassificationCounts = {
+    best: countClassification(whiteClassifications, "best"),
+    excellent: countClassification(whiteClassifications, "excellent"),
+    okay: countClassification(whiteClassifications, "okay"),
+    inaccuracy: countClassification(whiteClassifications, "inaccuracy"),
+    mistake: countClassification(whiteClassifications, "mistake"),
+    blunder: countClassification(whiteClassifications, "blunder"),
+  };
+
+  const blackCounts: ClassificationCounts = {
+    best: countClassification(blackClassifications, "best"),
+    excellent: countClassification(blackClassifications, "excellent"),
+    okay: countClassification(blackClassifications, "okay"),
+    inaccuracy: countClassification(blackClassifications, "inaccuracy"),
+    mistake: countClassification(blackClassifications, "mistake"),
+    blunder: countClassification(blackClassifications, "blunder"),
+  };
+
   return (
     <div className={styles.sidebarContainer}>
       {(sidebarView === "analysis" || sidebarView === "report") && (
@@ -239,6 +276,15 @@ const Sidebar = ({
             );
           })}
           <p style={{ color: currentClassificationColor }}>{currentMoveText}</p>
+        </div>
+      )}
+
+      {sidebarView === "report" && (
+        <div>
+          <ClassificationStats
+            whiteCounts={whiteCounts}
+            blackCounts={blackCounts}
+          />
         </div>
       )}
 

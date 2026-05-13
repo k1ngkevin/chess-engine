@@ -42,6 +42,7 @@
 ~~- bug: when on mainline branch icons on sidebar don't show~~<br>
 ~~- changed sidebar styling for classifications text~~<br>
 ~~- add loading bar while its generating the analysis array~~<br>
+~~- list of move classifications for each player on report tab~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph
@@ -50,10 +51,10 @@
 - make the best moves clickable
 - add accuracy rating for each player and elo
 - for best moves make it dropdown max 1 line
+- make it so that hanging mate is a blunder
 
 ### classifications
 
-- list of move classifications for each player on report tab
 - add book
 - add great
 - add miss

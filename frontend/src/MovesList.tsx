@@ -4,7 +4,7 @@ import styles from "./MovesList.module.css";
 import {
   type Branch,
   type GameMove,
-  type MoveClassification,
+  type NullableMoveClassification,
 } from "./types.ts";
 import { classificationToIcon } from "./classifications.ts";
 import { IconRotate } from "@tabler/icons-react";
@@ -27,7 +27,7 @@ type MovesListProps = {
     isOnMainline: boolean;
     currentBranchId: string | null;
     currentBranchIndex: number;
-    moveClassifications: MoveClassification[];
+    moveClassifications: NullableMoveClassification[];
   };
 };
 

@@ -11,7 +11,7 @@ import {
   type Branch,
   type EngineMove,
   type Arrow,
-  type MoveClassification,
+  type NullableMoveClassification,
   type GameMove,
 } from "./types";
 
@@ -30,7 +30,7 @@ type ChessboardProps = {
   isOnMainline: boolean;
   currentBranchId: string | null;
   currentBranchIndex: number;
-  moveClassifications: MoveClassification[];
+  moveClassifications: NullableMoveClassification[];
   boardOrientation: "white" | "black";
   playerInfo: {
     whiteUsername: string;

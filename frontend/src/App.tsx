@@ -18,7 +18,7 @@ import checkmateSound from "./assets/checkmate.mp3";
 import {
   type EngineMove,
   type EngineEvaluation,
-  type MoveClassification,
+  type NullableMoveClassification,
   type GameMove,
   type Branch,
   type ImportProgress,
@@ -45,7 +45,7 @@ const App = () => {
     (EngineEvaluation | null)[]
   >([]);
   const [moveClassifications, setMoveClassifications] = useState<
-    (MoveClassification | null)[]
+    NullableMoveClassification[]
   >([]);
 
   const [pgn, setPgn] = useState("");
