@@ -42,6 +42,8 @@
 ~~- bug: when on mainline branch icons on sidebar don't show~~<br>
 ~~- changed sidebar styling for classifications text~~<br>
 ~~- add loading bar while its generating the analysis array~~<br>
+~~- list of move classifications for each player on report tab~~<br>
+~~- make it so that hanging mate is a blunder (if Mate in less than 5 and the opponent wasn't getting mated before)~~<br>
 
 - make waiting bar for moves extend
 - evaluation graph

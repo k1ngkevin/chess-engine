@@ -18,10 +18,11 @@ import checkmateSound from "./assets/checkmate.mp3";
 import {
   type EngineMove,
   type EngineEvaluation,
-  type MoveClassification,
+  type NullableMoveClassification,
   type GameMove,
   type Branch,
   type ImportProgress,
+  type SidebarView,
 } from "./types";
 import "./App.css";
 
@@ -44,7 +45,7 @@ const App = () => {
     (EngineEvaluation | null)[]
   >([]);
   const [moveClassifications, setMoveClassifications] = useState<
-    (MoveClassification | null)[]
+    NullableMoveClassification[]
   >([]);
 
   const [pgn, setPgn] = useState("");
@@ -53,9 +54,7 @@ const App = () => {
     null,
   );
   const isImportingRef = useRef(false);
-  const [sidebarView, setSidebarView] = useState<"import" | "analysis">(
-    "import",
-  );
+  const [sidebarView, setSidebarView] = useState<SidebarView>("import");
 
   const [boardOrientation, setBoardOrientation] = useState<"white" | "black">(
     "white",
@@ -333,6 +332,8 @@ const App = () => {
             const bestMoveValue = bestMoveToCentipawn(bestMove);
             const playedMoveValue = evaluationToCentipawn(playedEval);
             const sideToMove = getSideToMove(fenBefore);
+            const beforeEval = playedMovesEval[i + j];
+            const afterEval = playedEval;
 
             if (bestMoveValue === null) {
               classificationsCopy[i + j] = null;
@@ -343,6 +344,8 @@ const App = () => {
               bestMoveValue,
               playedMoveValue,
               sideToMove,
+              beforeEval,
+              afterEval,
             );
           });
 
@@ -453,7 +456,10 @@ const App = () => {
     try {
       const move = game.move({ from, to, promotion: "q" });
       const isAtEndOfMainline = currentIndex === mainlineFens.length - 1;
-      setSidebarView("analysis");
+
+      if (sidebarView === "import") {
+        setSidebarView("analysis");
+      }
 
       if (isOnMainline && isAtEndOfMainline) {
         const nextIndex = currentIndex + 1;
@@ -564,12 +570,17 @@ const App = () => {
     currentFenIndex: number,
   ) {
     try {
-      const [bestMovesBefore, currentBestMovesResult, evaluationResult] =
-        await Promise.all([
-          analyzeFen(fenBefore),
-          analyzeFen(fenAfter),
-          getFenEvaluation(fenAfter),
-        ]);
+      const [
+        bestMovesBefore,
+        currentBestMovesResult,
+        beforeEvaluationResult,
+        afterEvaluationResult,
+      ] = await Promise.all([
+        analyzeFen(fenBefore),
+        analyzeFen(fenAfter),
+        getFenEvaluation(fenBefore),
+        getFenEvaluation(fenAfter),
+      ]);
       if (bestMovesBefore == null && currentBestMovesResult == null) return;
 
       setBranches((prev) =>
@@ -591,19 +602,21 @@ const App = () => {
         }),
       );
 
-      if (evaluationResult == null) return;
+      if (afterEvaluationResult == null) return;
       if (bestMovesBefore == null) return;
       if (bestMovesBefore[0] == null) return;
 
       const bestMoveValue = bestMoveToCentipawn(bestMovesBefore[0]);
       if (bestMoveValue == null) return;
-      const playedMoveValue = evaluationToCentipawn(evaluationResult);
+      const playedMoveValue = evaluationToCentipawn(afterEvaluationResult);
       const sideToMove = getSideToMove(fenBefore);
 
       const classificationsValue = classifyMove(
         bestMoveValue,
         playedMoveValue,
         sideToMove,
+        beforeEvaluationResult,
+        afterEvaluationResult,
       );
 
       setBranches((prev) =>
@@ -612,7 +625,7 @@ const App = () => {
           const evaluationCopy = [...branch.evaluations];
           const classificationsCopy = [...branch.classifications];
 
-          evaluationCopy[moveIndex] = evaluationResult;
+          evaluationCopy[moveIndex] = afterEvaluationResult;
           classificationsCopy[moveIndex] = classificationsValue;
 
           return {
@@ -634,12 +647,17 @@ const App = () => {
     currentFenIndex: number,
   ) {
     try {
-      const [bestMovesBefore, currentBestMovesResult, evaluationResults] =
-        await Promise.all([
-          analyzeFen(fenBefore),
-          analyzeFen(fenAfter),
-          getFenEvaluation(fenAfter),
-        ]);
+      const [
+        bestMovesBefore,
+        currentBestMovesResult,
+        beforeEvaluationResult,
+        afterEvaluationResult,
+      ] = await Promise.all([
+        analyzeFen(fenBefore),
+        analyzeFen(fenAfter),
+        getFenEvaluation(fenBefore),
+        getFenEvaluation(fenAfter),
+      ]);
       if (bestMovesBefore == null && currentBestMovesResult == null) return;
       setBestMovesArr((prev) => {
         const bestMovesCopy = [...prev];
@@ -652,16 +670,16 @@ const App = () => {
         return bestMovesCopy;
       });
 
-      if (evaluationResults == null) return;
+      if (afterEvaluationResult == null) return;
       if (bestMovesBefore == null) return;
       setPlayedMovesEval((prev) => {
         const evaluationCopy = [...prev];
-        evaluationCopy[currentFenIndex] = evaluationResults;
+        evaluationCopy[currentFenIndex] = afterEvaluationResult;
         return evaluationCopy;
       });
 
       const moves = bestMovesBefore[0];
-      const playedEval = evaluationResults;
+      const playedEval = afterEvaluationResult;
 
       setMoveClassifications((prev) => {
         const copy = [...prev];
@@ -690,6 +708,8 @@ const App = () => {
           bestMoveValue,
           playedMoveValue,
           sideToMove,
+          beforeEvaluationResult,
+          afterEvaluationResult,
         );
         return copy;
       });
@@ -790,10 +810,20 @@ const App = () => {
     return 50 + 50 * (2 / (1 + Math.exp(-0.004 * cp)) - 1);
   }
 
+  function isMateBadForMover(
+    evaluation: EngineEvaluation | null,
+    sideToMove: "w" | "b",
+  ): boolean {
+    if (!evaluation || evaluation.type !== "mate") return false;
+    return sideToMove === "w" ? evaluation.value < 0 : evaluation.value > 0;
+  }
+
   function classifyMove(
     bestCp: number,
     playedCp: number,
     sideToMove: "w" | "b",
+    beforeEval: EngineEvaluation | null,
+    afterEval: EngineEvaluation | null,
   ) {
     const bestWin = evalToWinPercent(bestCp);
     const playedWin = evalToWinPercent(playedCp);
@@ -802,6 +832,21 @@ const App = () => {
       0,
       sideToMove === "w" ? bestWin - playedWin : playedWin - bestWin,
     );
+
+    const mateBeforeBadForMover = isMateBadForMover(beforeEval, sideToMove);
+    const mateAfterBadForMover = isMateBadForMover(afterEval, sideToMove);
+    const mateDistance =
+      afterEval?.type === "mate" ? Math.abs(afterEval.value) : null;
+
+    if (
+      !mateBeforeBadForMover &&
+      mateAfterBadForMover &&
+      mateDistance != null
+    ) {
+      if (mateDistance <= 5) return "blunder";
+      if (mateDistance <= 10 && loss >= 20) return "blunder";
+      if (mateDistance <= 10 && loss >= 10) return "mistake";
+    }
 
     if (loss <= 1) return "best";
     if (loss <= 3.5) return "excellent";
@@ -855,6 +900,7 @@ const App = () => {
             isImporting: isImporting,
             importProgress: importProgress,
             sidebarView: sidebarView,
+            setSidebarView: setSidebarView,
           }}
           navigation={{
             onNextMove: nextMove,
