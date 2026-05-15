@@ -921,6 +921,7 @@ const App = () => {
             currentBranchId: currentBranchId,
             currentBranchIndex: currentBranchIndex,
             moveClassification: moveClassifications,
+            playedMoveEvaluations: playedMovesEval,
           }}
           actions={{
             onImportPgn: importPgn,

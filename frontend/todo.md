@@ -44,14 +44,19 @@
 ~~- add loading bar while its generating the analysis array~~<br>
 ~~- list of move classifications for each player on report tab~~<br>
 ~~- make it so that hanging mate is a blunder (if Mate in less than 5 and the opponent wasn't getting mated before)~~<br>
+~~- evaluation graph~~<br>
 
 - make waiting bar for moves extend
-- evaluation graph
 - add a notification for errors
 - have storage of the state on user refresh
 - make the best moves clickable
 - add accuracy rating for each player and elo
 - for best moves make it dropdown max 1 line
+
+- make the graph clickable
+- show bad moves on the graph
+- when hovering over the graph show the value, move, and classification
+- make the current dot/line the corresponding color of the move
 
 ### classifications
 
