@@ -9,6 +9,7 @@ import {
   type ImportProgress,
   type SidebarView,
   type MoveClassification,
+  type EngineEvaluation,
 } from "./types.ts";
 import MovesList from "./MovesList.tsx";
 import Analyze from "./Analyze.tsx";
@@ -19,6 +20,7 @@ import {
 } from "./classifications";
 import { IconArrowLeft } from "@tabler/icons-react";
 import ClassificationStats from "./ClassificationStats.tsx";
+import EvaluationGraph from "./EvaluationGraph.tsx";
 
 type SidebarProps = {
   pgnState: {
@@ -48,6 +50,7 @@ type SidebarProps = {
     currentBranchId: string | null;
     currentBranchIndex: number;
     moveClassification: NullableMoveClassification[];
+    playedMoveEvaluations: (EngineEvaluation | null)[];
   };
   actions: {
     onImportPgn: (pgn: string) => Promise<void>;
@@ -121,6 +124,7 @@ const Sidebar = ({
     currentBranchId,
     currentBranchIndex,
     moveClassification,
+    playedMoveEvaluations,
   } = gameState;
 
   const { onImportPgn, onBackButton } = actions;
@@ -276,6 +280,15 @@ const Sidebar = ({
             );
           })}
           <p style={{ color: currentClassificationColor }}>{currentMoveText}</p>
+        </div>
+      )}
+
+      {sidebarView === "report" && (
+        <div className={styles.reportGraphContainer}>
+          <EvaluationGraph
+            playedMovesEvaluation={playedMoveEvaluations}
+            currentIndex={currentIndex}
+          />
         </div>
       )}
 

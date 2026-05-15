@@ -1,0 +1,8 @@
+.evaluationGraphContainer {
+  width: 100%;
+  min-width: 0;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1f2023;
+}
