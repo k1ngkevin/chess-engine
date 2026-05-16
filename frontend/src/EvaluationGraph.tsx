@@ -103,6 +103,12 @@ function EvaluationGraph({
     };
   });
 
+  const maxAbsEvaluation = Math.max(
+    1,
+    ...data.map((point) => Math.abs(point.evaluation)),
+  );
+  const yLimit = Math.min(10, maxAbsEvaluation);
+
   const currentClassification = moveClassification[currentIndex - 1];
   const currentLineColor = currentClassification
     ? classificationToTextColor[currentClassification]
@@ -113,7 +119,7 @@ function EvaluationGraph({
       <ResponsiveContainer width="100%" height={120}>
         <AreaChart data={data}>
           <XAxis dataKey="index" hide />
-          <YAxis domain={[-10, 10]} hide />
+          <YAxis domain={[-yLimit, yLimit]} hide />
           <ReferenceLine y={0} stroke="#777" strokeWidth={1} />
           <ReferenceLine
             x={currentIndex}
@@ -126,11 +132,13 @@ function EvaluationGraph({
             type="linear"
             dataKey="evaluation"
             stroke="#ffffff"
+            strokeWidth={2}
             fill="#ffffff"
-            baseValue={-10}
             fillOpacity={1}
+            baseValue={-yLimit}
             isAnimationActive={false}
           />
+
           <Tooltip
             content={({
               active,
