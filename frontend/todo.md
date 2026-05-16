@@ -50,6 +50,7 @@
 ~~- make the current dot/line the corresponding color of the move~~<br>
 ~~- make the move buttons on the bottom of sidebar and appear for both report and analysis tabs~~<br>
 ~~- make the graph y max change based on the highest change in evaluation~~<br>
+~~- make the graph clickable~~<br>
 
 - make waiting bar for moves extend
 - add a notification for errors
@@ -57,8 +58,7 @@
 - make the best moves clickable
 - add accuracy rating for each player and elo
 
-- make the graph clickable
-- show bad moves on the graph
+- make the dots the corresponding color on graph
 
 ### classifications
 

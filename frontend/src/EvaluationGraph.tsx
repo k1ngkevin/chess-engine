@@ -27,6 +27,11 @@ type EvalPoint = {
   icon: string | null;
 };
 
+type ChartClickState = {
+  activeTooltipIndex?: number | string | null;
+  activeIndex?: number | string | null;
+};
+
 type EvaluationGraphProps = {
   isOnMainline: boolean;
   mainlineMoves: GameMove[];
@@ -36,6 +41,7 @@ type EvaluationGraphProps = {
   branches: Branch[];
   currentIndex: number;
   currentBranchIndex: number;
+  onMoveSelect: (moveIndex: number) => void;
 };
 
 function convertEval(evaluation: EngineEvaluation | null): number {
@@ -90,6 +96,7 @@ function EvaluationGraph({
   playedMovesEvaluation,
   moveClassification,
   currentIndex,
+  onMoveSelect,
 }: EvaluationGraphProps) {
   const data: EvalPoint[] = playedMovesEvaluation.map((evaluation, idx) => {
     const classification = idx > 0 ? moveClassification[idx - 1] : null;
@@ -114,10 +121,23 @@ function EvaluationGraph({
     ? classificationToTextColor[currentClassification]
     : "#fff";
 
+  function handleChartClick(nextState: ChartClickState) {
+    const activeIndex = nextState.activeTooltipIndex ?? nextState.activeIndex;
+    const pointIndex =
+      typeof activeIndex === "number" ? activeIndex : Number(activeIndex);
+
+    if (!Number.isInteger(pointIndex)) return;
+
+    const point = data[pointIndex];
+    if (!point) return;
+
+    onMoveSelect(point.index);
+  }
+
   return (
     <div className={styles.evaluationGraphContainer}>
       <ResponsiveContainer width="100%" height={120}>
-        <AreaChart data={data}>
+        <AreaChart data={data} onClick={handleChartClick}>
           <XAxis dataKey="index" hide />
           <YAxis domain={[-yLimit, yLimit]} hide />
           <ReferenceLine y={0} stroke="#777" strokeWidth={1} />
