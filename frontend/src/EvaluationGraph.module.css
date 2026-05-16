@@ -2,7 +2,44 @@
   width: 100%;
   min-width: 0;
   height: 120px;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   background: #1f2023;
+}
+
+.tooltipContainer {
+  display: flex;
+  min-width: 118px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(24, 25, 28, 0.94);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+  color: #f4f4f5;
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tooltipMove {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.tooltipClassificationIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.tooltipEvaluation {
+  color: #d7d8dc;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
 }

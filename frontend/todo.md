@@ -45,7 +45,6 @@
 ~~- list of move classifications for each player on report tab~~<br>
 ~~- make it so that hanging mate is a blunder (if Mate in less than 5 and the opponent wasn't getting mated before)~~<br>
 ~~- evaluation graph~~<br>
-=======
 ~~- for best moves make it be able to expand~~<br>
 
 - make waiting bar for moves extend
@@ -58,6 +57,7 @@
 - show bad moves on the graph
 - when hovering over the graph show the value, move, and classification
 - make the current dot/line the corresponding color of the move
+- make the graph y max change based on the highest change in evaluation
 
 ### classifications
 

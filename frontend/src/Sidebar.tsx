@@ -286,8 +286,14 @@ const Sidebar = ({
       {sidebarView === "report" && (
         <div className={styles.reportGraphContainer}>
           <EvaluationGraph
+            isOnMainline={isOnMainline}
+            mainlineMoves={mainlineMoves}
+            currentBranchId={currentBranchId}
             playedMovesEvaluation={playedMoveEvaluations}
+            moveClassification={moveClassification}
+            branches={branches}
             currentIndex={currentIndex}
+            currentBranchIndex={currentBranchIndex}
           />
         </div>
       )}
