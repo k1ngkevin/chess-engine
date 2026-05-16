@@ -46,17 +46,18 @@
 ~~- make it so that hanging mate is a blunder (if Mate in less than 5 and the opponent wasn't getting mated before)~~<br>
 ~~- evaluation graph~~<br>
 ~~- for best moves make it be able to expand~~<br>
+~~- when hovering over the graph show the value, move, and classification~~<br>
+~~- make the current dot/line the corresponding color of the move~~<br>
 
 - make waiting bar for moves extend
 - add a notification for errors
 - have storage of the state on user refresh
 - make the best moves clickable
 - add accuracy rating for each player and elo
+- make the move buttons on the bottom of sidebar and appear for both report and analysis tabs
 
 - make the graph clickable
 - show bad moves on the graph
-- when hovering over the graph show the value, move, and classification
-- make the current dot/line the corresponding color of the move
 - make the graph y max change based on the highest change in evaluation
 
 ### classifications

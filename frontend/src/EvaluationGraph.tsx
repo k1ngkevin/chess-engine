@@ -13,8 +13,12 @@ import {
   type NullableMoveClassification,
   type Branch,
   type GameMove,
+  type MoveClassification,
 } from "./types";
-import { classificationToIcon } from "./classifications";
+import {
+  classificationToIcon,
+  classificationToTextColor,
+} from "./classifications";
 
 type EvalPoint = {
   index: number;
@@ -100,6 +104,11 @@ function EvaluationGraph({
     };
   });
 
+  const currentClassification = moveClassification[currentIndex - 1];
+  const currentLineColor = currentClassification
+    ? classificationToTextColor[currentClassification]
+    : "#fff";
+
   return (
     <div className={styles.evaluationGraphContainer}>
       <ResponsiveContainer width="100%" height={120}>
@@ -109,8 +118,8 @@ function EvaluationGraph({
           <ReferenceLine y={0} stroke="#777" strokeWidth={1} />
           <ReferenceLine
             x={currentIndex}
-            stroke="#c78c4a"
-            fill="#c78c4a"
+            stroke={currentLineColor}
+            fill={currentLineColor}
             strokeWidth={2}
           />
 

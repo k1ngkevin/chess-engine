@@ -24,13 +24,10 @@ export const classificationToSquareColor: Record<string, string> = {
 };
 
 export const classificationToTextColor: Record<string, string> = {
-  brilliant: "#26c6da",
-  critical: "#6fa8dc",
   best: "#8bc34a",
   excellent: "#8bc34a",
   okay: "#aab89f",
   inaccuracy: "#f5c542",
   mistake: "#f39c12",
   blunder: "#e53935",
-  theory: "#b8926a",
 };
