@@ -7,18 +7,12 @@ import {
   type NullableMoveClassification,
 } from "./types.ts";
 import { classificationToIcon } from "./classifications.ts";
-import { IconRotate } from "@tabler/icons-react";
 
 type MovesListProps = {
   navigation: {
-    onNextMove: () => void;
-    onPrevMove: () => void;
     gotoMainlineMove: (move: number) => void;
     gotoBranchMove: (branchId: string, move: number) => void;
-    onBeginning: () => void;
-    onEnd: () => void;
     returnToMainline: () => void;
-    onFlipBoard: () => void;
   };
   gameState: {
     branches: Branch[];
@@ -32,15 +26,7 @@ type MovesListProps = {
 };
 
 const MovesList = ({ navigation, gameState }: MovesListProps) => {
-  const {
-    onNextMove,
-    onPrevMove,
-    gotoMainlineMove,
-    gotoBranchMove,
-    onBeginning,
-    onEnd,
-    onFlipBoard,
-  } = navigation;
+  const { gotoMainlineMove, gotoBranchMove } = navigation;
   const {
     branches,
     mainlineMoves,
@@ -171,43 +157,6 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
             ))}
           </tbody>
         </table>
-      </div>
-      <div className={styles.arrowButtonGroup}>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          onClick={() => onBeginning()}
-        >
-          {"<<"}
-        </button>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          onClick={() => onPrevMove()}
-        >
-          {"<"}
-        </button>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          onClick={() => onNextMove()}
-        >
-          {">"}
-        </button>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          onClick={() => onEnd()}
-        >
-          {">>"}
-        </button>
-        <button
-          type="button"
-          className={styles.arrowButton}
-          onClick={() => onFlipBoard()}
-        >
-          <IconRotate stroke={1.75} />
-        </button>
       </div>
     </div>
   );

@@ -13,7 +13,6 @@ import {
   type NullableMoveClassification,
   type Branch,
   type GameMove,
-  type MoveClassification,
 } from "./types";
 import {
   classificationToIcon,

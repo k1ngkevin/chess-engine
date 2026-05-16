@@ -21,6 +21,7 @@ import {
 import { IconArrowLeft } from "@tabler/icons-react";
 import ClassificationStats from "./ClassificationStats.tsx";
 import EvaluationGraph from "./EvaluationGraph.tsx";
+import { IconRotate } from "@tabler/icons-react";
 
 type SidebarProps = {
   pgnState: {
@@ -62,7 +63,7 @@ type ImportProgressBarProps = {
   progress: ImportProgress;
 };
 
-const ImportProgressBar = ({ progress }: ImportProgressBarProps) => {
+function ImportProgressBar({ progress }: ImportProgressBarProps) {
   const progressPercent =
     progress.total > 0
       ? Math.round((progress.current / progress.total) * 100)
@@ -89,7 +90,7 @@ const ImportProgressBar = ({ progress }: ImportProgressBarProps) => {
       </div>
     </div>
   );
-};
+}
 
 const Sidebar = ({
   pgnState,
@@ -210,6 +211,48 @@ const Sidebar = ({
     blunder: countClassification(blackClassifications, "blunder"),
   };
 
+  function ArrowButtonComponent() {
+    return (
+      <div className={styles.arrowButtonGroup}>
+        <button
+          type="button"
+          className={styles.arrowButton}
+          onClick={() => onBeginning()}
+        >
+          {"<<"}
+        </button>
+        <button
+          type="button"
+          className={styles.arrowButton}
+          onClick={() => onPrevMove()}
+        >
+          {"<"}
+        </button>
+        <button
+          type="button"
+          className={styles.arrowButton}
+          onClick={() => onNextMove()}
+        >
+          {">"}
+        </button>
+        <button
+          type="button"
+          className={styles.arrowButton}
+          onClick={() => onEnd()}
+        >
+          {">>"}
+        </button>
+        <button
+          type="button"
+          className={styles.arrowButton}
+          onClick={() => onHandleClick()}
+        >
+          <IconRotate stroke={1.75} />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.sidebarContainer}>
       {(sidebarView === "analysis" || sidebarView === "report") && (
@@ -311,14 +354,9 @@ const Sidebar = ({
         <div className={styles.movesListWrapper}>
           <MovesList
             navigation={{
-              onNextMove: onNextMove,
-              onPrevMove: onPrevMove,
               gotoMainlineMove: gotoMainlineMove,
               gotoBranchMove: gotoBranchMove,
-              onBeginning: onBeginning,
-              onEnd: onEnd,
               returnToMainline: returnToMainline,
-              onFlipBoard: onHandleClick,
             }}
             gameState={{
               branches: branches,
@@ -331,6 +369,9 @@ const Sidebar = ({
             }}
           />
         </div>
+      )}
+      {(sidebarView === "analysis" || sidebarView === "report") && (
+        <ArrowButtonComponent />
       )}
     </div>
   );
