@@ -40,11 +40,13 @@
 .analyzeWrapper,
 .movesListWrapper {
   width: 90%;
+  align-self: center;
   display: flex;
 }
 
 .importProgressContainer {
   width: 80%;
+  align-self: center;
   margin-top: 16px;
   color: #f3f4f6;
   font-size: 14px;
@@ -93,7 +95,10 @@
 
 .moveTextContainer {
   display: flex;
+  width: 90%;
+  align-self: center;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 
   font-size: 24px;
@@ -146,4 +151,17 @@
 .reportContainer {
   width: 100%;
   min-width: 0;
+}
+
+.reportGraphContainer {
+  width: 100%;
+  min-width: 0;
+  align-self: stretch;
+}
+
+.reportStatsContainer {
+  width: min(100%, 450px);
+  align-self: center;
+  display: flex;
+  justify-content: center;
 }

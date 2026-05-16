@@ -299,7 +299,7 @@ const Sidebar = ({
       )}
 
       {sidebarView === "report" && (
-        <div>
+        <div className={styles.reportStatsContainer}>
           <ClassificationStats
             whiteCounts={whiteCounts}
             blackCounts={blackCounts}
