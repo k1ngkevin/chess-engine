@@ -6,6 +6,7 @@ import {
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
+  ReferenceDot,
 } from "recharts";
 import styles from "./EvaluationGraph.module.css";
 import {
@@ -27,6 +28,11 @@ type EvalPoint = {
   icon: string | null;
 };
 
+type ChartClickState = {
+  activeTooltipIndex?: number | string | null;
+  activeIndex?: number | string | null;
+};
+
 type EvaluationGraphProps = {
   isOnMainline: boolean;
   mainlineMoves: GameMove[];
@@ -36,6 +42,7 @@ type EvaluationGraphProps = {
   branches: Branch[];
   currentIndex: number;
   currentBranchIndex: number;
+  onMoveSelect: (moveIndex: number) => void;
 };
 
 function convertEval(evaluation: EngineEvaluation | null): number {
@@ -90,6 +97,7 @@ function EvaluationGraph({
   playedMovesEvaluation,
   moveClassification,
   currentIndex,
+  onMoveSelect,
 }: EvaluationGraphProps) {
   const data: EvalPoint[] = playedMovesEvaluation.map((evaluation, idx) => {
     const classification = idx > 0 ? moveClassification[idx - 1] : null;
@@ -103,17 +111,68 @@ function EvaluationGraph({
     };
   });
 
+  const maxAbsEvaluation = Math.max(
+    1,
+    ...data.map((point) => Math.abs(point.evaluation)),
+  );
+  const yLimit = Math.min(10, maxAbsEvaluation);
+
   const currentClassification = moveClassification[currentIndex - 1];
   const currentLineColor = currentClassification
     ? classificationToTextColor[currentClassification]
     : "#fff";
 
+  function handleChartClick(nextState: ChartClickState) {
+    const activeIndex = nextState.activeTooltipIndex ?? nextState.activeIndex;
+    const pointIndex =
+      typeof activeIndex === "number" ? activeIndex : Number(activeIndex);
+
+    if (!Number.isInteger(pointIndex)) return;
+
+    const point = data[pointIndex];
+    if (!point) return;
+
+    onMoveSelect(point.index);
+  }
+
+  function renderActiveDot({
+    cx,
+    cy,
+    r,
+    payload,
+  }: {
+    cx?: number;
+    cy?: number;
+    r?: number | string;
+    payload?: EvalPoint;
+  }) {
+    if (cx == null || cy == null || !payload) return null;
+
+    const classification =
+      payload.index > 0 ? moveClassification[payload.index - 1] : null;
+
+    const color = classification
+      ? classificationToTextColor[classification]
+      : "#fff";
+
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r ?? 4}
+        fill={color}
+        stroke={color}
+        strokeWidth={2}
+      />
+    );
+  }
+
   return (
     <div className={styles.evaluationGraphContainer}>
       <ResponsiveContainer width="100%" height={120}>
-        <AreaChart data={data}>
+        <AreaChart data={data} onClick={handleChartClick}>
           <XAxis dataKey="index" hide />
-          <YAxis domain={[-10, 10]} hide />
+          <YAxis domain={[-yLimit, yLimit]} hide />
           <ReferenceLine y={0} stroke="#777" strokeWidth={1} />
           <ReferenceLine
             x={currentIndex}
@@ -121,16 +180,20 @@ function EvaluationGraph({
             fill={currentLineColor}
             strokeWidth={2}
           />
+          <ReferenceDot stroke={currentLineColor} fill={currentLineColor} />
 
           <Area
             type="linear"
             dataKey="evaluation"
             stroke="#ffffff"
+            strokeWidth={2}
             fill="#ffffff"
-            baseValue={-10}
             fillOpacity={1}
+            baseValue={-yLimit}
             isAnimationActive={false}
+            activeDot={renderActiveDot}
           />
+
           <Tooltip
             content={({
               active,

@@ -337,6 +337,7 @@ const Sidebar = ({
             branches={branches}
             currentIndex={currentIndex}
             currentBranchIndex={currentBranchIndex}
+            onMoveSelect={gotoMainlineMove}
           />
         </div>
       )}
