@@ -13,12 +13,12 @@ import {
   type Arrow,
   type NullableMoveClassification,
   type GameMove,
-} from "./types";
+} from "../types/types";
 
 import {
   classificationToSquareColor,
   classificationToIcon,
-} from "./classifications";
+} from "../analysis/lib/classifications";
 
 type ChessboardProps = {
   fen: string;
@@ -114,12 +114,12 @@ function ChessboardPanel({
       ? {
           username: blackUsername,
           elo: blackElo,
-          icon: "/src/assets/chess_black_king.png",
+          icon: "/src/assets/pieces/chess_black_king.png",
         }
       : {
           username: whiteUsername,
           elo: whiteElo,
-          icon: "/src/assets/chess_white_king.png",
+          icon: "/src/assets/pieces/chess_white_king.png",
         };
 
   const bottomPlayer =
@@ -127,12 +127,12 @@ function ChessboardPanel({
       ? {
           username: whiteUsername,
           elo: whiteElo,
-          icon: "/src/assets/chess_white_king.png",
+          icon: "/src/assets/pieces/chess_white_king.png",
         }
       : {
           username: blackUsername,
           elo: blackElo,
-          icon: "/src/assets/chess_black_king.png",
+          icon: "/src/assets/pieces/chess_black_king.png",
         };
 
   useEffect(() => {

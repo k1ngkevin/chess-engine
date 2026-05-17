@@ -5,7 +5,7 @@ import {
   type AnalyzeResponse,
   type AnalyzeBatchResponse,
   type EvaluateBatchResponse,
-} from "./types.ts";
+} from "../types/types.ts";
 export async function analyzePosition(
   fen: string,
   depth = 15,

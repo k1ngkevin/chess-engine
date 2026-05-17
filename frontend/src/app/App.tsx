@@ -1,20 +1,20 @@
 import { useState, useEffect, useRef } from "react";
-import ChessboardPanel from "./ChessboardPanel";
+import ChessboardPanel from "../board/ChessboardPanel";
 import { Chess } from "chess.js";
-import Sidebar from "./Sidebar";
-import EvaluationBar from "./EvaluationBar";
+import Sidebar from "../sidebar/Sidebar";
+import EvaluationBar from "../analysis/EvaluationBar";
 import {
   analyzePosition,
   analyzeFenBatch,
   fetchFenEvaluation,
   evaluateFensBatch,
-} from "./api";
-import captureSound from "./assets/capture.mp3";
-import castleSound from "./assets/castle.mp3";
-import checkSound from "./assets/check.mp3";
-import moveSound from "./assets/move.mp3";
-import promoteSound from "./assets/promote.mp3";
-import checkmateSound from "./assets/checkmate.mp3";
+} from "../api/api";
+import captureSound from "../assets/sounds/capture.mp3";
+import castleSound from "../assets/sounds/castle.mp3";
+import checkSound from "../assets/sounds/check.mp3";
+import moveSound from "../assets/sounds/move.mp3";
+import promoteSound from "../assets/sounds/promote.mp3";
+import checkmateSound from "../assets/sounds/checkmate.mp3";
 import {
   type EngineMove,
   type EngineEvaluation,
@@ -23,7 +23,7 @@ import {
   type Branch,
   type ImportProgress,
   type SidebarView,
-} from "./types";
+} from "../types/types";
 import "./App.css";
 
 const App = () => {

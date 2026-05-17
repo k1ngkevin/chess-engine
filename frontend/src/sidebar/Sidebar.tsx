@@ -10,17 +10,17 @@ import {
   type SidebarView,
   type MoveClassification,
   type EngineEvaluation,
-} from "./types.ts";
-import MovesList from "./MovesList.tsx";
-import Analyze from "./Analyze.tsx";
-import PgnImportForm from "./PgnImportForm.tsx";
+} from "../types/types.ts";
+import MovesList from "../moves/MovesList.tsx";
+import Analyze from "../analysis/Analyze.tsx";
+import PgnImportForm from "../import/PgnImportForm.tsx";
 import {
   classificationToIcon,
   classificationToTextColor,
-} from "./classifications";
+} from "../analysis/lib/classifications.ts";
 import { IconArrowLeft } from "@tabler/icons-react";
-import ClassificationStats from "./ClassificationStats.tsx";
-import EvaluationGraph from "./EvaluationGraph.tsx";
+import ClassificationStats from "../analysis/ClassificationStats.tsx";
+import EvaluationGraph from "../analysis/EvaluationGraph.tsx";
 import { IconRotate } from "@tabler/icons-react";
 
 type SidebarProps = {

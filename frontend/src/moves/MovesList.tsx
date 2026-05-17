@@ -5,8 +5,8 @@ import {
   type Branch,
   type GameMove,
   type NullableMoveClassification,
-} from "./types.ts";
-import { classificationToIcon } from "./classifications.ts";
+} from "../types/types.ts";
+import { classificationToIcon } from "../analysis/lib/classifications.ts";
 
 type MovesListProps = {
   navigation: {

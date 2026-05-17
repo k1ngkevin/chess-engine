@@ -6,7 +6,6 @@ import {
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
-  ReferenceDot,
 } from "recharts";
 import styles from "./EvaluationGraph.module.css";
 import {
@@ -14,11 +13,11 @@ import {
   type NullableMoveClassification,
   type Branch,
   type GameMove,
-} from "./types";
+} from "../types/types";
 import {
   classificationToIcon,
   classificationToTextColor,
-} from "./classifications";
+} from "./lib/classifications";
 
 type EvalPoint = {
   index: number;
@@ -180,7 +179,6 @@ function EvaluationGraph({
             fill={currentLineColor}
             strokeWidth={2}
           />
-          <ReferenceDot stroke={currentLineColor} fill={currentLineColor} />
 
           <Area
             type="linear"

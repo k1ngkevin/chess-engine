@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { type EngineEvaluation, type Branch } from "./types.ts";
+import { type EngineEvaluation, type Branch } from "../types/types.ts";
 import styles from "./EvaluationBar.module.css";
 
 interface EvaluationProps {

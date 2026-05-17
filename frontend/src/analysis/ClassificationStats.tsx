@@ -1,10 +1,13 @@
-import { type MoveClassification, type ClassificationCounts } from "./types";
-import bestIcon from "./assets/Classification-Icons/best_64x.png";
-import excellentIcon from "./assets/Classification-Icons/excellent_64x.png";
-import okayIcon from "./assets/Classification-Icons/okay_64x.png";
-import inaccuracyIcon from "./assets/Classification-Icons/inaccuracy_64x.png";
-import mistakeIcon from "./assets/Classification-Icons/mistake_64x.png";
-import blunderIcon from "./assets/Classification-Icons/blunder_64x.png";
+import {
+  type MoveClassification,
+  type ClassificationCounts,
+} from "../types/types";
+import bestIcon from "../assets/Classification-Icons/best_64x.png";
+import excellentIcon from "../assets/Classification-Icons/excellent_64x.png";
+import okayIcon from "../assets/Classification-Icons/okay_64x.png";
+import inaccuracyIcon from "../assets/Classification-Icons/inaccuracy_64x.png";
+import mistakeIcon from "../assets/Classification-Icons/mistake_64x.png";
+import blunderIcon from "../assets/Classification-Icons/blunder_64x.png";
 import styles from "./ClassificationStats.module.css";
 
 type ClassificationStatsProps = {
