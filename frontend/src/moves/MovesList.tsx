@@ -6,7 +6,7 @@ import {
   type GameMove,
   type NullableMoveClassification,
 } from "../types/types.ts";
-import { classificationToIcon } from "../analysis/lib/classifications.ts";
+import { classificationToIcon } from "../lib/classifications.ts";
 
 type MovesListProps = {
   navigation: {
@@ -66,7 +66,7 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
               const isWhiteMove = plyIndex % 2 === 0;
               const classification = branch?.classifications[branchMoveIndex];
               const iconSrc = classification
-                ? classificationToIcon[classification]
+                ? classificationToIcon[classification.classification]
                 : undefined;
 
               return (
@@ -86,11 +86,13 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
                       gotoBranchMove(branch.id, branchFenIndex);
                     }}
                   >
-                    <img
-                      key={branchMoveIndex}
-                      src={iconSrc}
-                      className={styles.classificationIcon}
-                    />
+                    {iconSrc && (
+                      <img
+                        key={branchMoveIndex}
+                        src={iconSrc}
+                        className={styles.classificationIcon}
+                      />
+                    )}
                     {branchMove.san}
                   </button>
                 </div>
@@ -116,6 +118,10 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
                   {row.map((move, moveIndex) => {
                     const currentMove = rowIndex * 2 + moveIndex;
                     const fenIndex = currentMove + 1;
+                    const classification = moveClassifications[currentMove];
+                    const iconSrc = classification
+                      ? classificationToIcon[classification.classification]
+                      : undefined;
 
                     return (
                       <td key={currentMove}>
@@ -124,17 +130,13 @@ const MovesList = ({ navigation, gameState }: MovesListProps) => {
                         ${isOnMainline && currentIndex === fenIndex ? styles.currentMove : ""}`}
                           onClick={() => gotoMainlineMove(fenIndex)}
                         >
-                          <img
-                            key={currentMove}
-                            src={
-                              classificationToIcon[
-                                moveClassifications[currentMove]
-                                  ? moveClassifications[currentMove]
-                                  : ""
-                              ]
-                            }
-                            className={styles.classificationIcon}
-                          />
+                          {iconSrc && (
+                            <img
+                              key={currentMove}
+                              src={iconSrc}
+                              className={styles.classificationIcon}
+                            />
+                          )}
                           {move.san}
                         </button>
                       </td>

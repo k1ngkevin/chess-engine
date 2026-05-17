@@ -17,7 +17,7 @@ import PgnImportForm from "../import/PgnImportForm.tsx";
 import {
   classificationToIcon,
   classificationToTextColor,
-} from "../analysis/lib/classifications.ts";
+} from "../lib/classifications.ts";
 import { IconArrowLeft } from "@tabler/icons-react";
 import ClassificationStats from "../analysis/ClassificationStats.tsx";
 import EvaluationGraph from "../analysis/EvaluationGraph.tsx";
@@ -135,11 +135,11 @@ const Sidebar = ({
   );
 
   const currentMainlineClassification =
-    moveClassification[currentIndex - 1] ?? "";
+    moveClassification[currentIndex - 1]?.classification ?? "";
 
   const currentBranchClassification =
     currentBranchIndex > 0
-      ? currentBranch?.classifications[currentBranchIndex - 1]
+      ? currentBranch?.classifications[currentBranchIndex - 1]?.classification
       : "";
 
   const currentMainlineSan = mainlineMoves[currentIndex - 1]?.san ?? "";
@@ -189,11 +189,13 @@ const Sidebar = ({
     targetClassification: MoveClassification,
   ): number {
     return arr.filter(
-      (classification) => classification === targetClassification,
+      (classificationResult) =>
+        classificationResult?.classification === targetClassification,
     ).length;
   }
 
   const whiteCounts: ClassificationCounts = {
+    book: countClassification(whiteClassifications, "book"),
     best: countClassification(whiteClassifications, "best"),
     excellent: countClassification(whiteClassifications, "excellent"),
     okay: countClassification(whiteClassifications, "okay"),
@@ -203,6 +205,7 @@ const Sidebar = ({
   };
 
   const blackCounts: ClassificationCounts = {
+    book: countClassification(blackClassifications, "book"),
     best: countClassification(blackClassifications, "best"),
     excellent: countClassification(blackClassifications, "excellent"),
     okay: countClassification(blackClassifications, "okay"),

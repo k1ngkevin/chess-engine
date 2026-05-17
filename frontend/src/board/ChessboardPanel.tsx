@@ -18,7 +18,7 @@ import {
 import {
   classificationToSquareColor,
   classificationToIcon,
-} from "../analysis/lib/classifications";
+} from "../lib/classifications";
 
 type ChessboardProps = {
   fen: string;
@@ -95,16 +95,17 @@ function ChessboardPanel({
   const currentClassification = isOnMainline
     ? mainlineClassification
     : currentBranchClassification;
+  const currentClassificationKey = currentClassification?.classification;
 
   const currentMove = isOnMainline
     ? mainlineMoves[currentIndex - 1]
     : currentBranch?.moves[currentBranchIndex - 1];
 
-  const currentIconClassification = currentClassification
+  const currentIconClassification = currentClassificationKey
     ? [
         {
           square: currentMove?.to,
-          src: classificationToIcon[currentClassification],
+          src: classificationToIcon[currentClassificationKey],
         },
       ]
     : [];
@@ -138,8 +139,8 @@ function ChessboardPanel({
   useEffect(() => {
     const newSquareColor: Record<string, React.CSSProperties> = {};
 
-    if (currentMove && currentClassification) {
-      const color = classificationToSquareColor[currentClassification];
+    if (currentMove && currentClassificationKey) {
+      const color = classificationToSquareColor[currentClassificationKey];
 
       if (color) {
         newSquareColor[currentMove.from] = {
@@ -153,7 +154,7 @@ function ChessboardPanel({
     }
 
     setSquareColor(newSquareColor);
-  }, [currentMove, currentClassification]);
+  }, [currentMove, currentClassificationKey]);
 
   const engineArrows = useMemo(() => {
     const currentMainlineBestMoves = bestMoves[currentIndex];

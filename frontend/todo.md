@@ -52,16 +52,18 @@
 ~~- make the graph y max change based on the highest change in evaluation~~<br>
 ~~- make the graph clickable~~<br>
 ~~- make the dots the corresponding color on graph~~<br>
+~~- add book~~<br>
+~~- organize the files in the frontend/src folder~~<br>
 
 - make waiting bar for moves extend
 - add a notification for errors
 - have storage of the state on user refresh
 - make the best moves clickable
 - add accuracy rating for each player and elo
-- organize the files in the frontend/src folder
+- add openings name
+- add number of book moves to report
 
 ### classifications
 
-- add book
 - add great
 - add miss

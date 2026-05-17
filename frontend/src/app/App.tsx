@@ -23,8 +23,17 @@ import {
   type Branch,
   type ImportProgress,
   type SidebarView,
+  type MoveClassificationResult,
 } from "../types/types";
 import "./App.css";
+import {
+  findOpening,
+  getPositionBook,
+  openingBook,
+} from "@chess-openings/eco.json";
+
+const openings = await openingBook();
+const positionBook = getPositionBook(openings);
 
 const App = () => {
   const [mainlineMoves, setMainlineMoves] = useState<GameMove[]>([]);
@@ -316,6 +325,7 @@ const App = () => {
           analyzeResults.forEach((move, j) => {
             const playedEval = evaluationResults[j];
             const fenBefore = beforeChunk[j];
+            const fenAfter = afterChunk[j];
 
             if (!move || !playedEval || !fenBefore) {
               classificationsCopy[i + j] = null;
@@ -341,6 +351,7 @@ const App = () => {
             }
 
             classificationsCopy[i + j] = classifyMove(
+              fenAfter,
               bestMoveValue,
               playedMoveValue,
               sideToMove,
@@ -612,6 +623,7 @@ const App = () => {
       const sideToMove = getSideToMove(fenBefore);
 
       const classificationsValue = classifyMove(
+        fenAfter,
         bestMoveValue,
         playedMoveValue,
         sideToMove,
@@ -705,6 +717,7 @@ const App = () => {
         }
 
         copy[playedMoveIndex] = classifyMove(
+          fenAfter,
           bestMoveValue,
           playedMoveValue,
           sideToMove,
@@ -819,12 +832,22 @@ const App = () => {
   }
 
   function classifyMove(
+    fen: string,
     bestCp: number,
     playedCp: number,
     sideToMove: "w" | "b",
     beforeEval: EngineEvaluation | null,
     afterEval: EngineEvaluation | null,
-  ) {
+  ): MoveClassificationResult {
+    const opening = findOpening(openings, fen, positionBook);
+    if (opening) {
+      console.log("book move");
+      return {
+        classification: "book",
+        openingName: opening.name,
+      };
+    }
+
     const bestWin = evalToWinPercent(bestCp);
     const playedWin = evalToWinPercent(playedCp);
 
@@ -843,17 +866,19 @@ const App = () => {
       mateAfterBadForMover &&
       mateDistance != null
     ) {
-      if (mateDistance <= 5) return "blunder";
-      if (mateDistance <= 10 && loss >= 20) return "blunder";
-      if (mateDistance <= 10 && loss >= 10) return "mistake";
+      if (mateDistance <= 5) return { classification: "blunder" };
+      if (mateDistance <= 10 && loss >= 20)
+        return { classification: "blunder" };
+      if (mateDistance <= 10 && loss >= 10)
+        return { classification: "mistake" };
     }
 
-    if (loss <= 1) return "best";
-    if (loss <= 3.5) return "excellent";
-    if (loss <= 6) return "okay";
-    if (loss <= 10) return "inaccuracy";
-    if (loss <= 20) return "mistake";
-    return "blunder";
+    if (loss <= 1) return { classification: "best" };
+    if (loss <= 3.5) return { classification: "excellent" };
+    if (loss <= 6) return { classification: "okay" };
+    if (loss <= 10) return { classification: "inaccuracy" };
+    if (loss <= 20) return { classification: "mistake" };
+    return { classification: "blunder" };
   }
 
   function onFlipBoard() {

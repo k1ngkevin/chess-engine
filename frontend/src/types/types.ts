@@ -43,7 +43,7 @@ export type Branch = {
   fens: string[];
   evaluations: (EngineEvaluation | null)[];
   bestMoves: (EngineMove[] | null)[];
-  classifications: (MoveClassification | null)[];
+  classifications: (NullableMoveClassification | null)[];
 };
 
 export type Arrow = {
@@ -52,22 +52,21 @@ export type Arrow = {
   color: string;
 }
 
-export type MoveClassification = 
-  "best" |
-  "excellent" |
-  "okay" |
-  "inaccuracy" |
-  "mistake" |
-  "blunder"
+export type MoveClassification =
+  | "book"
+  | "best"
+  | "excellent"
+  | "okay"
+  | "inaccuracy"
+  | "mistake"
+  | "blunder";
 
-export type NullableMoveClassification = 
-  "best" |
-  "excellent" |
-  "okay" |
-  "inaccuracy" |
-  "mistake" |
-  "blunder" | 
-  null
+export type MoveClassificationResult = {
+  classification: MoveClassification;
+  openingName?: string;
+};
+
+export type NullableMoveClassification = MoveClassificationResult | null;
 
 export type ClassificationCounts = Record<MoveClassification, number>;
 

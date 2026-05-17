@@ -17,7 +17,7 @@ import {
 import {
   classificationToIcon,
   classificationToTextColor,
-} from "./lib/classifications";
+} from "../lib/classifications";
 
 type EvalPoint = {
   index: number;
@@ -100,13 +100,14 @@ function EvaluationGraph({
 }: EvaluationGraphProps) {
   const data: EvalPoint[] = playedMovesEvaluation.map((evaluation, idx) => {
     const classification = idx > 0 ? moveClassification[idx - 1] : null;
+    const classificationKey = classification?.classification;
 
     return {
       index: idx,
       evaluation: convertEval(evaluation),
       rawEvaluation: evaluation,
       san: idx > 0 ? (mainlineMoves[idx - 1]?.san ?? `Move ${idx}`) : "Start",
-      icon: classification ? classificationToIcon[classification] : null,
+      icon: classificationKey ? classificationToIcon[classificationKey] : null,
     };
   });
 
@@ -117,8 +118,9 @@ function EvaluationGraph({
   const yLimit = Math.min(10, maxAbsEvaluation);
 
   const currentClassification = moveClassification[currentIndex - 1];
-  const currentLineColor = currentClassification
-    ? classificationToTextColor[currentClassification]
+  const currentClassificationKey = currentClassification?.classification;
+  const currentLineColor = currentClassificationKey
+    ? classificationToTextColor[currentClassificationKey]
     : "#fff";
 
   function handleChartClick(nextState: ChartClickState) {
@@ -149,9 +151,10 @@ function EvaluationGraph({
 
     const classification =
       payload.index > 0 ? moveClassification[payload.index - 1] : null;
+    const classificationKey = classification?.classification;
 
-    const color = classification
-      ? classificationToTextColor[classification]
+    const color = classificationKey
+      ? classificationToTextColor[classificationKey]
       : "#fff";
 
     return (
