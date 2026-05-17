@@ -51,14 +51,14 @@
 ~~- make the move buttons on the bottom of sidebar and appear for both report and analysis tabs~~<br>
 ~~- make the graph y max change based on the highest change in evaluation~~<br>
 ~~- make the graph clickable~~<br>
+~~- make the dots the corresponding color on graph~~<br>
 
 - make waiting bar for moves extend
 - add a notification for errors
 - have storage of the state on user refresh
 - make the best moves clickable
 - add accuracy rating for each player and elo
-
-- make the dots the corresponding color on graph
+- organize the files in the frontend/src folder
 
 ### classifications
 

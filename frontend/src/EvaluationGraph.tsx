@@ -6,6 +6,7 @@ import {
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
+  ReferenceDot,
 } from "recharts";
 import styles from "./EvaluationGraph.module.css";
 import {
@@ -134,6 +135,38 @@ function EvaluationGraph({
     onMoveSelect(point.index);
   }
 
+  function renderActiveDot({
+    cx,
+    cy,
+    r,
+    payload,
+  }: {
+    cx?: number;
+    cy?: number;
+    r?: number | string;
+    payload?: EvalPoint;
+  }) {
+    if (cx == null || cy == null || !payload) return null;
+
+    const classification =
+      payload.index > 0 ? moveClassification[payload.index - 1] : null;
+
+    const color = classification
+      ? classificationToTextColor[classification]
+      : "#fff";
+
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r ?? 4}
+        fill={color}
+        stroke={color}
+        strokeWidth={2}
+      />
+    );
+  }
+
   return (
     <div className={styles.evaluationGraphContainer}>
       <ResponsiveContainer width="100%" height={120}>
@@ -147,6 +180,7 @@ function EvaluationGraph({
             fill={currentLineColor}
             strokeWidth={2}
           />
+          <ReferenceDot stroke={currentLineColor} fill={currentLineColor} />
 
           <Area
             type="linear"
@@ -157,6 +191,7 @@ function EvaluationGraph({
             fillOpacity={1}
             baseValue={-yLimit}
             isAnimationActive={false}
+            activeDot={renderActiveDot}
           />
 
           <Tooltip
