@@ -58,9 +58,6 @@ function ChessboardPanel({
   const chessGame = fen ? new Chess(fen) : new Chess();
   const [moveFrom, setMoveFrom] = useState("");
   const [optionSquares, setOptionSquares] = useState({});
-  const [squareColor, setSquareColor] = useState<
-    Record<string, React.CSSProperties>
-  >({});
 
   const [boardSize, setBoardSize] = useState(0);
   const boardRef = useRef<HTMLDivElement | null>(null);
@@ -136,25 +133,21 @@ function ChessboardPanel({
           icon: "/src/assets/pieces/chess_black_king.png",
         };
 
-  useEffect(() => {
-    const newSquareColor: Record<string, React.CSSProperties> = {};
+  const squareColor: Record<string, React.CSSProperties> = {};
 
-    if (currentMove && currentClassificationKey) {
-      const color = classificationToSquareColor[currentClassificationKey];
+  if (currentMove && currentClassificationKey) {
+    const color = classificationToSquareColor[currentClassificationKey];
 
-      if (color) {
-        newSquareColor[currentMove.from] = {
-          background: color,
-        };
+    if (color) {
+      squareColor[currentMove.from] = {
+        background: color,
+      };
 
-        newSquareColor[currentMove.to] = {
-          background: color,
-        };
-      }
+      squareColor[currentMove.to] = {
+        background: color,
+      };
     }
-
-    setSquareColor(newSquareColor);
-  }, [currentMove, currentClassificationKey]);
+  }
 
   const engineArrows = useMemo(() => {
     const currentMainlineBestMoves = bestMoves[currentIndex];

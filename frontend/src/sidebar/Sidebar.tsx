@@ -1,5 +1,4 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import styles from "./Sidebar.module.css";
 import {
   type Branch,
@@ -63,6 +62,20 @@ type SidebarProps = {
 type ImportProgressBarProps = {
   progress: ImportProgress;
 };
+
+function findLatestOpeningName(
+  classifications: readonly NullableMoveClassification[],
+  lastMoveIndex: number,
+): string {
+  const startIndex = Math.min(lastMoveIndex, classifications.length - 1);
+
+  for (let i = startIndex; i >= 0; i -= 1) {
+    const openingName = classifications[i]?.openingName;
+    if (openingName) return openingName;
+  }
+
+  return "";
+}
 
 function ImportProgressBar({ progress }: ImportProgressBarProps) {
   const progressPercent =
@@ -130,7 +143,6 @@ const Sidebar = ({
   } = gameState;
 
   const { onImportPgn, onBackButton } = actions;
-  const [openingName, setOpeningName] = useState<string | undefined>("");
 
   const currentBranch = branches.find(
     (branch) => branch.id === currentBranchId,
@@ -153,26 +165,23 @@ const Sidebar = ({
     ? currentMainlineClassification
     : currentBranchClassification;
 
-  useEffect(() => {
-    if (currentIndex === 0) {
-      setOpeningName("");
-    }
-    const currentMainlineOpening =
-      moveClassification[currentIndex - 1]?.openingName ?? "";
-
-    const currentBranchOpening =
-      currentBranchIndex > 0
-        ? currentBranch?.classifications[currentBranchIndex - 1]?.openingName
-        : "";
-
-    const currentOpening = isOnMainline
-      ? currentMainlineOpening
-      : currentBranchOpening;
-
-    if (currentOpening !== "") {
-      setOpeningName(currentOpening);
-    }
-  }, [currentIndex, currentBranchIndex]);
+  const currentMainlineOpeningName = findLatestOpeningName(
+    moveClassification,
+    currentIndex - 1,
+  );
+  const currentBranchOpeningName =
+    currentBranch && currentBranchIndex > 0
+      ? findLatestOpeningName(
+          currentBranch.classifications,
+          currentBranchIndex - 1,
+        )
+      : "";
+  const currentBranchFallbackOpeningName = currentBranch
+    ? findLatestOpeningName(moveClassification, currentBranch.startIndex - 1)
+    : "";
+  const openingName = isOnMainline
+    ? currentMainlineOpeningName
+    : currentBranchOpeningName || currentBranchFallbackOpeningName;
 
   const currentMoveText =
     currentMoveSan != "" && currentMoveClassification != ""
@@ -237,7 +246,7 @@ const Sidebar = ({
     blunder: countClassification(blackClassifications, "blunder"),
   };
 
-  function ArrowButtonComponent() {
+  function renderArrowButtons() {
     return (
       <div className={styles.arrowButtonGroup}>
         <button
@@ -405,7 +414,7 @@ const Sidebar = ({
         </div>
       )}
       {(sidebarView === "analysis" || sidebarView === "report") && (
-        <ArrowButtonComponent />
+        renderArrowButtons()
       )}
     </div>
   );

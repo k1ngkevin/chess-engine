@@ -425,6 +425,14 @@ const App = () => {
 
     try {
       setBranches([]);
+      setBestMovesArr([]);
+      setPlayedMovesEval([]);
+      setMoveClassifications([]);
+      setCurrentFen(new Chess().fen());
+      setCurrentIndex(0);
+      setIsOnMainline(true);
+      setCurrentBranchId(null);
+      setCurrentBranchIndex(-1);
       getUsernameAndElo(pgn);
 
       const history = temp.history({ verbose: true });
@@ -450,7 +458,6 @@ const App = () => {
 
       setMainlineMoves(gameMoves);
       setMainlineFens(fens);
-      setCurrentIndex(0);
       await analyzeAndEvaluateMoves(0, fens);
       setSidebarView("analysis");
     } catch (error) {
@@ -791,6 +798,7 @@ const App = () => {
     setBestMovesArr([]);
     setBranches([]);
     setPlayedMovesEval([]);
+    setMoveClassifications([]);
     setCurrentFen(new Chess().fen());
     setCurrentIndex(0);
     setIsOnMainline(true);
