@@ -10,7 +10,7 @@ import {
   type SidebarView,
   type MoveClassification,
   type EngineEvaluation,
-} from "../types/types.ts";
+} from "../types/chessTypes.ts";
 import MovesList from "../moves/MovesList.tsx";
 import Analyze from "../analysis/Analyze.tsx";
 import PgnImportForm from "../import/PgnImportForm.tsx";

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import { type EngineMove, type Branch } from "../types/types";
+import { type EngineMove, type Branch } from "../types/chessTypes";
 import styles from "./Analyze.module.css";
 
 interface AnalyzeProps {

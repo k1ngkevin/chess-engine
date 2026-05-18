@@ -54,14 +54,16 @@
 ~~- make the dots the corresponding color on graph~~<br>
 ~~- add book~~<br>
 ~~- organize the files in the frontend/src folder~~<br>
+~~- add number of book moves to report~~<br>
 
 - make waiting bar for moves extend
 - add a notification for errors
 - have storage of the state on user refresh
 - make the best moves clickable
 - add accuracy rating for each player and elo
+- add engine depth toggle
 - add openings name
-- add number of book moves to report
+- bug: hover dot on graph stays on
 
 ### classifications
 

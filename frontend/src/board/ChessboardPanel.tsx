@@ -13,7 +13,7 @@ import {
   type Arrow,
   type NullableMoveClassification,
   type GameMove,
-} from "../types/types";
+} from "../types/chessTypes";
 
 import {
   classificationToSquareColor,

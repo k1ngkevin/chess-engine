@@ -5,7 +5,7 @@ import {
   type Branch,
   type GameMove,
   type NullableMoveClassification,
-} from "../types/types.ts";
+} from "../types/chessTypes.ts";
 import { classificationToIcon } from "../lib/classifications.ts";
 
 type MovesListProps = {

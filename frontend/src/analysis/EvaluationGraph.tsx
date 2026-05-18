@@ -13,7 +13,7 @@ import {
   type NullableMoveClassification,
   type Branch,
   type GameMove,
-} from "../types/types";
+} from "../types/chessTypes";
 import {
   classificationToIcon,
   classificationToTextColor,

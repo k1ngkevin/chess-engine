@@ -24,7 +24,7 @@ import {
   type ImportProgress,
   type SidebarView,
   type MoveClassificationResult,
-} from "../types/types";
+} from "../types/chessTypes";
 import "./App.css";
 import {
   findOpening,
