@@ -1,4 +1,5 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import styles from "./Sidebar.module.css";
 import {
   type Branch,
@@ -129,6 +130,7 @@ const Sidebar = ({
   } = gameState;
 
   const { onImportPgn, onBackButton } = actions;
+  const [openingName, setOpeningName] = useState<string | undefined>("");
 
   const currentBranch = branches.find(
     (branch) => branch.id === currentBranchId,
@@ -150,6 +152,27 @@ const Sidebar = ({
   const currentMoveClassification = isOnMainline
     ? currentMainlineClassification
     : currentBranchClassification;
+
+  useEffect(() => {
+    if (currentIndex === 0) {
+      setOpeningName("");
+    }
+    const currentMainlineOpening =
+      moveClassification[currentIndex - 1]?.openingName ?? "";
+
+    const currentBranchOpening =
+      currentBranchIndex > 0
+        ? currentBranch?.classifications[currentBranchIndex - 1]?.openingName
+        : "";
+
+    const currentOpening = isOnMainline
+      ? currentMainlineOpening
+      : currentBranchOpening;
+
+    if (currentOpening !== "") {
+      setOpeningName(currentOpening);
+    }
+  }, [currentIndex, currentBranchIndex]);
 
   const currentMoveText =
     currentMoveSan != "" && currentMoveClassification != ""
@@ -314,18 +337,25 @@ const Sidebar = ({
       )}
 
       {(sidebarView === "analysis" || sidebarView === "report") && (
-        <div className={styles.moveTextContainer}>
-          {currentIconClassification.map((icon) => {
-            if (!icon.square) return null;
-            return (
-              <img
-                key={icon.square}
-                src={icon.src}
-                className={styles.classificationIconText}
-              />
-            );
-          })}
-          <p style={{ color: currentClassificationColor }}>{currentMoveText}</p>
+        <div className={styles.moveContainer}>
+          <div className={styles.moveTextContainer}>
+            {currentIconClassification.map((icon) => {
+              if (!icon.square) return null;
+              return (
+                <img
+                  key={icon.square}
+                  src={icon.src}
+                  className={styles.classificationIconText}
+                />
+              );
+            })}
+            <p style={{ color: currentClassificationColor }}>
+              {currentMoveText}
+            </p>
+          </div>
+          <div className={styles.openingContainer}>
+            <p>{openingName ?? ""}</p>
+          </div>
         </div>
       )}
 

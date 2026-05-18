@@ -841,7 +841,6 @@ const App = () => {
   ): MoveClassificationResult {
     const opening = findOpening(openings, fen, positionBook);
     if (opening) {
-      console.log("book move");
       return {
         classification: "book",
         openingName: opening.name,
