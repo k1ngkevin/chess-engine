@@ -4,9 +4,11 @@ import {
   XAxis,
   YAxis,
   ReferenceLine,
+  ReferenceDot,
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import { useState } from "react";
 import styles from "./EvaluationGraph.module.css";
 import {
   type EngineEvaluation,
@@ -98,6 +100,8 @@ function EvaluationGraph({
   currentIndex,
   onMoveSelect,
 }: EvaluationGraphProps) {
+  const [isTooltipActive, setIsTooltipActive] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const data: EvalPoint[] = playedMovesEvaluation.map((evaluation, idx) => {
     const classification = idx > 0 ? moveClassification[idx - 1] : null;
     const classificationKey = classification?.classification;
@@ -117,62 +121,63 @@ function EvaluationGraph({
   );
   const yLimit = Math.min(10, maxAbsEvaluation);
 
-  const currentClassification = moveClassification[currentIndex - 1];
-  const currentClassificationKey = currentClassification?.classification;
-  const currentLineColor = currentClassificationKey
-    ? classificationToTextColor[currentClassificationKey]
+  function getPointColor(pointIndex: number): string {
+    const classification =
+      pointIndex > 0 ? moveClassification[pointIndex - 1] : null;
+    const classificationKey = classification?.classification;
+    return classificationKey
+      ? classificationToTextColor[classificationKey]
+      : "#fff";
+  }
+
+  const currentLineColor = getPointColor(currentIndex);
+  const currentPoint = data[currentIndex];
+  const hoveredPoint =
+    hoveredIndex !== null && hoveredIndex !== currentIndex
+      ? data[hoveredIndex]
+      : null;
+  const hoveredPointColor = hoveredPoint
+    ? getPointColor(hoveredPoint.index)
     : "#fff";
 
-  function handleChartClick(nextState: ChartClickState) {
+  function getPointFromChartState(nextState: ChartClickState) {
     const activeIndex = nextState.activeTooltipIndex ?? nextState.activeIndex;
     const pointIndex =
       typeof activeIndex === "number" ? activeIndex : Number(activeIndex);
 
-    if (!Number.isInteger(pointIndex)) return;
+    if (!Number.isInteger(pointIndex)) return null;
 
-    const point = data[pointIndex];
+    return data[pointIndex] ?? null;
+  }
+
+  function handleChartMouseMove(nextState: ChartClickState) {
+    setIsTooltipActive(true);
+
+    const point = getPointFromChartState(nextState);
+    setHoveredIndex(point?.index ?? null);
+  }
+
+  function handleChartMouseLeave() {
+    setIsTooltipActive(false);
+    setHoveredIndex(null);
+  }
+
+  function handleChartClick(nextState: ChartClickState) {
+    const point = getPointFromChartState(nextState);
     if (!point) return;
 
     onMoveSelect(point.index);
   }
 
-  function renderActiveDot({
-    cx,
-    cy,
-    r,
-    payload,
-  }: {
-    cx?: number;
-    cy?: number;
-    r?: number | string;
-    payload?: EvalPoint;
-  }) {
-    if (cx == null || cy == null || !payload) return null;
-
-    const classification =
-      payload.index > 0 ? moveClassification[payload.index - 1] : null;
-    const classificationKey = classification?.classification;
-
-    const color = classificationKey
-      ? classificationToTextColor[classificationKey]
-      : "#fff";
-
-    return (
-      <circle
-        cx={cx}
-        cy={cy}
-        r={r ?? 4}
-        fill={color}
-        stroke={color}
-        strokeWidth={2}
-      />
-    );
-  }
-
   return (
     <div className={styles.evaluationGraphContainer}>
       <ResponsiveContainer width="100%" height={120}>
-        <AreaChart data={data} onClick={handleChartClick}>
+        <AreaChart
+          data={data}
+          onClick={handleChartClick}
+          onMouseMove={handleChartMouseMove}
+          onMouseLeave={handleChartMouseLeave}
+        >
           <XAxis dataKey="index" hide />
           <YAxis domain={[-yLimit, yLimit]} hide />
           <ReferenceLine y={0} stroke="#777" strokeWidth={1} />
@@ -192,10 +197,35 @@ function EvaluationGraph({
             fillOpacity={1}
             baseValue={-yLimit}
             isAnimationActive={false}
-            activeDot={renderActiveDot}
+            activeDot={false}
           />
 
+          {currentPoint && (
+            <ReferenceDot
+              x={currentPoint.index}
+              y={currentPoint.evaluation}
+              r={4}
+              fill={currentLineColor}
+              stroke={currentLineColor}
+              strokeWidth={2}
+            />
+          )}
+
+          {hoveredPoint && (
+            <ReferenceDot
+              x={hoveredPoint.index}
+              y={hoveredPoint.evaluation}
+              r={4}
+              fill={hoveredPointColor}
+              stroke={hoveredPointColor}
+              strokeWidth={2}
+            />
+          )}
+
           <Tooltip
+            active={isTooltipActive}
+            cursor={false}
+            trigger="hover"
             content={({
               active,
               payload,
