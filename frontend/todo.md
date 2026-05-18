@@ -56,6 +56,7 @@
 ~~- organize the files in the frontend/src folder~~<br>
 ~~- add number of book moves to report~~<br>
 ~~- add openings name~~<br>
+~~- lock board movement when importing~~<br>
 
 - make waiting bar for moves extend
 - add a notification for errors
@@ -64,7 +65,7 @@
 - add accuracy rating for each player and elo
 - add engine depth toggle
 - bug: hover dot on graph stays on
-- lock board movement when importing
+- bug: when user moves in new game it uses old opening name
 
 ### classifications
 

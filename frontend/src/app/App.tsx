@@ -463,6 +463,10 @@ const App = () => {
   }
 
   function handleUserMove(from: string, to: string): boolean {
+    if (isImporting) {
+      return false;
+    }
+
     const game = new Chess(currentFen);
     try {
       const move = game.move({ from, to, promotion: "q" });
