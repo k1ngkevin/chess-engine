@@ -305,17 +305,19 @@ const Sidebar = ({
         ) : (
           <span className={styles.topBarSpacer} />
         )}
-        <button
-          type="button"
-          className={styles.settingsButton}
-          aria-label="Open settings"
-          onClick={() => setIsSettingsOpen(true)}
-        >
-          <IconSettings stroke={1.75} />
-        </button>
+        {sidebarView === "import" && (
+          <button
+            type="button"
+            className={styles.settingsButton}
+            aria-label="Open settings"
+            onClick={() => setIsSettingsOpen(true)}
+          >
+            <IconSettings stroke={1.75} />
+          </button>
+        )}
       </div>
 
-      {isSettingsOpen && (
+      {sidebarView === "import" && isSettingsOpen && (
         <SettingsComponent
           settings={settings}
           updateSettings={updateSettings}

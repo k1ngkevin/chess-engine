@@ -83,11 +83,11 @@ const EvaluationBar = ({
   const whitePercent = convertEvalToPercent(type, value);
 
   const evalTextStyle =
-    boardOrientation === "white" && value > 0
+    boardOrientation === "white" && value >= 0
       ? { bottom: "8px", color: "black" }
       : boardOrientation === "white" && value < 0
         ? { top: "8px", color: "white" }
-        : boardOrientation === "black" && value > 0
+        : boardOrientation === "black" && value >= 0
           ? { top: "8px", color: "black" }
           : { bottom: "8px", color: "white" };
 
