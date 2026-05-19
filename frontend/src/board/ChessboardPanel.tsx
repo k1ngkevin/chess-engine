@@ -13,6 +13,7 @@ import {
   type Arrow,
   type NullableMoveClassification,
   type GameMove,
+  type Settings,
 } from "../types/chessTypes";
 
 import {
@@ -38,6 +39,7 @@ type ChessboardProps = {
     whiteElo: number | undefined;
     blackElo: number | undefined;
   };
+  settings: Settings;
 };
 
 function ChessboardPanel({
@@ -53,6 +55,7 @@ function ChessboardPanel({
   moveClassifications,
   boardOrientation,
   playerInfo,
+  settings,
 }: ChessboardProps) {
   const { whiteUsername, blackUsername, whiteElo, blackElo } = playerInfo;
   const chessGame = fen ? new Chess(fen) : new Chess();
@@ -304,7 +307,7 @@ function ChessboardPanel({
     onSquareClick,
     arrowOptions,
     boardOrientation,
-    arrows: engineArrows,
+    arrows: settings.showEngineArrows ? engineArrows : undefined,
     position: fen,
     id: "click-or-drag-to-move",
     squareStyles: {

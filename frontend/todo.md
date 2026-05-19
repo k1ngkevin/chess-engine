@@ -66,6 +66,7 @@
 - have storage of the state on user refresh
 - make the best moves clickable
 - add accuracy rating for each player and elo
+- change calculations based on settings
 
 ### classifications
 

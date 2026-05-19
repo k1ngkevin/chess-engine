@@ -955,6 +955,7 @@ const App = () => {
             whiteElo: whiteElo,
             blackElo: blackElo,
           }}
+          settings={settings}
         />
       </div>
       <div className="sidebarWrapper">
