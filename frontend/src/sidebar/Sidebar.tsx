@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./Sidebar.module.css";
 import {
   type Branch,
@@ -10,6 +10,7 @@ import {
   type SidebarView,
   type MoveClassification,
   type EngineEvaluation,
+  type Settings,
 } from "../types/chessTypes.ts";
 import MovesList from "../moves/MovesList.tsx";
 import Analyze from "../analysis/Analyze.tsx";
@@ -21,7 +22,8 @@ import {
 import { IconArrowLeft } from "@tabler/icons-react";
 import ClassificationStats from "../analysis/ClassificationStats.tsx";
 import EvaluationGraph from "../analysis/EvaluationGraph.tsx";
-import { IconRotate } from "@tabler/icons-react";
+import SettingsComponent from "../settings/Settings.tsx";
+import { IconRotate, IconSettings } from "@tabler/icons-react";
 
 type SidebarProps = {
   pgnState: {
@@ -52,6 +54,7 @@ type SidebarProps = {
     currentBranchIndex: number;
     moveClassification: NullableMoveClassification[];
     playedMoveEvaluations: (EngineEvaluation | null)[];
+    settings: Settings;
   };
   actions: {
     onImportPgn: (pgn: string) => Promise<void>;
@@ -140,9 +143,11 @@ const Sidebar = ({
     currentBranchIndex,
     moveClassification,
     playedMoveEvaluations,
+    settings,
   } = gameState;
 
   const { onImportPgn, onBackButton } = actions;
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const currentBranch = branches.find(
     (branch) => branch.id === currentBranchId,
@@ -290,10 +295,29 @@ const Sidebar = ({
 
   return (
     <div className={styles.sidebarContainer}>
-      {(sidebarView === "analysis" || sidebarView === "report") && (
-        <button className={styles.backButton} onClick={() => onBackButton()}>
-          <IconArrowLeft stroke={1.75} />
+      <div className={styles.sidebarTopBar}>
+        {sidebarView === "analysis" || sidebarView === "report" ? (
+          <button className={styles.backButton} onClick={() => onBackButton()}>
+            <IconArrowLeft stroke={1.75} />
+          </button>
+        ) : (
+          <span className={styles.topBarSpacer} />
+        )}
+        <button
+          type="button"
+          className={styles.settingsButton}
+          aria-label="Open settings"
+          onClick={() => setIsSettingsOpen(true)}
+        >
+          <IconSettings stroke={1.75} />
         </button>
+      </div>
+
+      {isSettingsOpen && (
+        <SettingsComponent
+          settings={settings}
+          onClose={() => setIsSettingsOpen(false)}
+        />
       )}
 
       {sidebarView === "import" && (
@@ -341,6 +365,7 @@ const Sidebar = ({
             isOnMainline={isOnMainline}
             currentBranchId={currentBranchId}
             currentBranchIndex={currentBranchIndex}
+            settings={settings}
           />
         </div>
       )}
@@ -413,9 +438,8 @@ const Sidebar = ({
           />
         </div>
       )}
-      {(sidebarView === "analysis" || sidebarView === "report") && (
-        renderArrowButtons()
-      )}
+      {(sidebarView === "analysis" || sidebarView === "report") &&
+        renderArrowButtons()}
     </div>
   );
 };

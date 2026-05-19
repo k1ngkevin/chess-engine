@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import { type EngineMove, type Branch } from "../types/chessTypes";
+import {
+  type EngineMove,
+  type Branch,
+  type Settings,
+} from "../types/chessTypes";
 import styles from "./Analyze.module.css";
 
 interface AnalyzeProps {
@@ -10,6 +14,7 @@ interface AnalyzeProps {
   isOnMainline: boolean;
   currentBranchId: string | null;
   currentBranchIndex: number;
+  settings: Settings;
 }
 
 interface AnalysisMoveRowProps {
@@ -101,6 +106,7 @@ const Analyze = ({
   isOnMainline: isOnMainline,
   currentBranchId: currentBranchId,
   currentBranchIndex: currentBranchIndex,
+  settings: settings,
 }: AnalyzeProps) => {
   const currentMainlineBestMoves = bestMoves[currentIndex];
   const currentBranch = currentBranchId
@@ -127,9 +133,12 @@ const Analyze = ({
           ))}
         </>
       ) : (
-        currentBestMoves?.map((move, idx) => (
-          <AnalysisMoveRow key={idx} move={move} />
-        ))
+        <div>
+          <p style={{ color: "gray" }}>{`Depth: ${settings.engineDepth}`}</p>
+          {currentBestMoves?.map((move, idx) => (
+            <AnalysisMoveRow key={idx} move={move} />
+          ))}
+        </div>
       )}
     </div>
   );

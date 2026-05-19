@@ -24,6 +24,7 @@ import {
   type ImportProgress,
   type SidebarView,
   type MoveClassificationResult,
+  type Settings,
 } from "../types/chessTypes";
 import "./App.css";
 import {
@@ -73,6 +74,13 @@ const App = () => {
   const [blackUsername, setBlackUsername] = useState("Black");
   const [blackElo, setBlackElo] = useState<number>();
 
+  const defaultSettings: Settings = {
+    showEngineArrows: true,
+    engineDepth: 15,
+    numberOfLines: 3,
+  };
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
+
   const captureSoundRef = useRef(new Audio(captureSound));
   const castleSoundRef = useRef(new Audio(castleSound));
   const checkSoundRef = useRef(new Audio(checkSound));
@@ -110,7 +118,10 @@ const App = () => {
 
       const bestFenResult = await analyzeFen(startingFen);
       setBestMovesArr([bestFenResult]);
-      const evaluationResult = await getFenEvaluation(startingFen);
+      const evaluationResult = await getFenEvaluation(
+        startingFen,
+        settings.engineDepth,
+      );
       setPlayedMovesEval([evaluationResult]);
     }
     void analyzeStartingPosition();
@@ -285,7 +296,11 @@ const App = () => {
         );
         const afterChunk = fens.slice(i + 1, i + 1 + chunkSize);
 
-        const analyzeResults = await analyzeFens(beforeChunk);
+        const analyzeResults = await analyzeFens(
+          beforeChunk,
+          settings.engineDepth,
+          settings.numberOfLines,
+        );
         if (analyzeResults === null) {
           return null;
         }
@@ -302,7 +317,10 @@ const App = () => {
           return analyzeCopy;
         });
 
-        const evaluationResults = await evaluateFens(afterChunk);
+        const evaluationResults = await evaluateFens(
+          afterChunk,
+          settings.engineDepth,
+        );
         if (evaluationResults === null) {
           return null;
         }
@@ -600,8 +618,8 @@ const App = () => {
       ] = await Promise.all([
         analyzeFen(fenBefore),
         analyzeFen(fenAfter),
-        getFenEvaluation(fenBefore),
-        getFenEvaluation(fenAfter),
+        getFenEvaluation(fenBefore, settings.engineDepth),
+        getFenEvaluation(fenAfter, settings.engineDepth),
       ]);
       if (bestMovesBefore == null && currentBestMovesResult == null) return;
 
@@ -678,8 +696,8 @@ const App = () => {
       ] = await Promise.all([
         analyzeFen(fenBefore),
         analyzeFen(fenAfter),
-        getFenEvaluation(fenBefore),
-        getFenEvaluation(fenAfter),
+        getFenEvaluation(fenBefore, settings.engineDepth),
+        getFenEvaluation(fenAfter, settings.engineDepth),
       ]);
       if (bestMovesBefore == null && currentBestMovesResult == null) return;
       setBestMovesArr((prev) => {
@@ -744,7 +762,11 @@ const App = () => {
 
   async function analyzeFen(fen: string): Promise<EngineMove[] | null> {
     try {
-      const response = await analyzePosition(fen);
+      const response = await analyzePosition(
+        fen,
+        settings.engineDepth,
+        settings.numberOfLines,
+      );
       return response.best_moves;
     } catch (error) {
       console.error(error);
@@ -958,6 +980,7 @@ const App = () => {
             currentBranchIndex: currentBranchIndex,
             moveClassification: moveClassifications,
             playedMoveEvaluations: playedMovesEval,
+            settings: settings,
           }}
           actions={{
             onImportPgn: importPgn,

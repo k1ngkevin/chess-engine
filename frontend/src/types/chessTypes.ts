@@ -71,3 +71,9 @@ export type NullableMoveClassification = MoveClassificationResult | null;
 export type ClassificationCounts = Record<MoveClassification, number>;
 
 export type SidebarView = "import" | "report" | "analysis"
+
+export type Settings = {
+  showEngineArrows: boolean;
+  engineDepth: number;
+  numberOfLines: number;
+};
