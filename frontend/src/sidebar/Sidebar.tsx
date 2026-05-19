@@ -55,6 +55,7 @@ type SidebarProps = {
     moveClassification: NullableMoveClassification[];
     playedMoveEvaluations: (EngineEvaluation | null)[];
     settings: Settings;
+    updateSettings: (newSettings: Partial<Settings>) => void;
   };
   actions: {
     onImportPgn: (pgn: string) => Promise<void>;
@@ -144,6 +145,7 @@ const Sidebar = ({
     moveClassification,
     playedMoveEvaluations,
     settings,
+    updateSettings,
   } = gameState;
 
   const { onImportPgn, onBackButton } = actions;
@@ -316,6 +318,7 @@ const Sidebar = ({
       {isSettingsOpen && (
         <SettingsComponent
           settings={settings}
+          updateSettings={updateSettings}
           onClose={() => setIsSettingsOpen(false)}
         />
       )}

@@ -5,10 +5,11 @@ import { type Settings as SettingsValues } from "../types/chessTypes";
 
 type SettingsProps = {
   settings: SettingsValues;
+  updateSettings: (newSettings: Partial<SettingsValues>) => void;
   onClose: () => void;
 };
 
-function Settings({ settings, onClose }: SettingsProps) {
+function Settings({ settings, updateSettings, onClose }: SettingsProps) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -67,6 +68,9 @@ function Settings({ settings, onClose }: SettingsProps) {
                 className={styles.checkboxInput}
                 type="checkbox"
                 defaultChecked={settings.showEngineArrows}
+                onChange={(event) => {
+                  updateSettings({ showEngineArrows: event.target.checked });
+                }}
               />
             </div>
             <div className={styles.settingRow}>
@@ -85,6 +89,11 @@ function Settings({ settings, onClose }: SettingsProps) {
                 max={25}
                 step={1}
                 defaultValue={settings.engineDepth}
+                onChange={(event) => {
+                  updateSettings({
+                    engineDepth: Math.min(25, Number(event.target.value)),
+                  });
+                }}
               />
             </div>
             <div className={styles.settingRow}>
@@ -100,6 +109,11 @@ function Settings({ settings, onClose }: SettingsProps) {
                 max={5}
                 step={1}
                 defaultValue={settings.numberOfLines}
+                onChange={(event) => {
+                  updateSettings({
+                    numberOfLines: Math.min(5, Number(event.target.value)),
+                  });
+                }}
               />
             </div>
           </section>

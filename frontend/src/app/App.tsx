@@ -918,6 +918,13 @@ const App = () => {
     setBoardOrientation((prev) => (prev === "white" ? "black" : "white"));
   }
 
+  function updateSettings(newSettings: Partial<Settings>) {
+    setSettings((prev) => ({
+      ...prev,
+      ...newSettings,
+    }));
+  }
+
   return (
     <div className="container">
       <div className="boardContainer">
@@ -981,6 +988,7 @@ const App = () => {
             moveClassification: moveClassifications,
             playedMoveEvaluations: playedMovesEval,
             settings: settings,
+            updateSettings: updateSettings,
           }}
           actions={{
             onImportPgn: importPgn,

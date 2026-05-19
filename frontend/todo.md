@@ -59,13 +59,13 @@
 ~~- lock board movement when importing~~<br>
 ~~- bug: when user moves in new game it uses old opening name~~<br>
 ~~- bug: hover dot on graph stays on~~<br>
+~~- add engine depth toggle~~<br>
 
 - make waiting bar for moves extend
 - add a notification for errors
 - have storage of the state on user refresh
 - make the best moves clickable
 - add accuracy rating for each player and elo
-- add engine depth toggle
 
 ### classifications
 
