@@ -27,27 +27,33 @@
   position: absolute;
   z-index: 10;
 
-  width: 200px;
-  padding: 8px 12px;
+  box-sizing: border-box;
+  width: min(220px, 90%);
+  height: calc(var(--player-card-offset, 60px) - 4px);
+  padding: 6px 12px;
   background-color: #2a2a2a;
   color: white;
   border-radius: 8px;
 }
 
 .bottomPlayer {
-  bottom: -60px;
+  bottom: calc(0px - var(--player-card-offset, 60px));
 }
 
 .topPlayer {
-  top: -60px;
+  top: calc(0px - var(--player-card-offset, 60px));
 }
 
 .playerContainer img {
-  width: 42px;
-  height: auto;
+  width: clamp(30px, calc(var(--player-card-offset, 60px) - 18px), 42px);
+  height: clamp(30px, calc(var(--player-card-offset, 60px) - 18px), 42px);
   flex-shrink: 0;
+  object-fit: contain;
 }
 
 .playerText {
-  overflow-wrap: break-word;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

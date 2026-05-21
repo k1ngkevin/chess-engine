@@ -1,5 +1,5 @@
 .evaluationBarWhite {
-  width: 50px;
+  width: var(--eval-bar-width, 50px);
   background-color: black;
   overflow: hidden;
   position: relative;
@@ -10,7 +10,7 @@
 
 
 .evaluationBarBlack {
-  width: 50px;
+  width: var(--eval-bar-width, 50px);
   background-color: black;
   overflow: hidden;
   position: relative;

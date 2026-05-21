@@ -1,19 +1,36 @@
 .container {
-  --board-size: 48vw;
+  --layout-margin: 2vw;
+  --layout-gap: 2vw;
+  --viewport-padding: clamp(8px, 1.5svh, 16px);
+  --board-gap: 6px;
+  --eval-bar-width: 50px;
+  --sidebar-width: clamp(350px, 28vw, 450px);
+  --player-card-offset: clamp(48px, 7svh, 60px);
+  --board-size: min(
+    calc(
+      100svh - var(--player-card-offset) - var(--player-card-offset) -
+        var(--viewport-padding) - var(--viewport-padding)
+    ),
+    calc(
+      100vw - var(--layout-margin) - var(--layout-margin) -
+        var(--layout-gap) - var(--sidebar-width) - var(--eval-bar-width) -
+        var(--board-gap)
+    )
+  );
 
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 2vw;
-  margin-top: 5vw;
+  gap: var(--layout-gap);
+  margin-top: calc(var(--player-card-offset) + var(--viewport-padding));
 }
 
 .boardContainer {
   display: flex;
   align-items: stretch;
-  gap: 6px;
+  gap: var(--board-gap);
   height: var(--board-size);
-  margin-left: 2vw;
+  margin-left: var(--layout-margin);
 }
 
 [id^="click-or-drag-to-move-square"] span span {
@@ -29,8 +46,12 @@
 .sidebarWrapper {
   display: flex;
   align-self: flex-start;
-  width: clamp(350px, 28vw, 450px);
-  height: var(--board-size);
+  width: var(--sidebar-width);
+  height: calc(
+    var(--board-size) + var(--player-card-offset) +
+      var(--player-card-offset)
+  );
+  margin-top: calc(0px - var(--player-card-offset));
   min-height: 0;
 }
 
@@ -39,4 +60,43 @@
   height: 100%;
   max-height: 100%;
   min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .container {
+    --layout-margin: clamp(10px, 3vw, 16px);
+    --layout-gap: 16px;
+    --eval-bar-width: clamp(28px, 7vw, 40px);
+    --sidebar-width: calc(
+      100vw - var(--layout-margin) - var(--layout-margin)
+    );
+    --player-card-offset: clamp(44px, 7svh, 54px);
+    --board-size: min(
+      calc(
+        100svh - var(--player-card-offset) - var(--player-card-offset) -
+          var(--viewport-padding) - var(--viewport-padding)
+      ),
+      calc(
+        100vw - var(--layout-margin) - var(--layout-margin) -
+          var(--eval-bar-width) - var(--board-gap)
+      )
+    );
+
+    flex-direction: column;
+    gap: var(--layout-gap);
+  }
+
+  .boardContainer {
+    margin-bottom: var(--player-card-offset);
+  }
+
+  .sidebarWrapper {
+    width: var(--sidebar-width);
+    height: min(
+      520px,
+      calc(100svh - var(--viewport-padding) - var(--viewport-padding))
+    );
+    margin-top: 0;
+    margin-left: var(--layout-margin);
+  }
 }
