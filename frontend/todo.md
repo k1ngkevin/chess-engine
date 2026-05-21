@@ -67,6 +67,8 @@
 - make the best moves clickable
 - add accuracy rating for each player and elo
 - change calculations based on settings
+- add README with instructions on how to set it up
+- fix the size being different on different screen sizes
 
 ### classifications
 
