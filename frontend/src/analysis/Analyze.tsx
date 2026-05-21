@@ -134,7 +134,7 @@ const Analyze = ({
         </>
       ) : (
         <div>
-          {/* <p style={{ color: "gray" }}>{`Depth: ${settings.engineDepth}`}</p> */}
+          <p style={{ color: "gray" }}>{`Depth: ${settings.engineDepth}`}</p>
           {currentBestMoves?.map((move, idx) => (
             <AnalysisMoveRow key={idx} move={move} />
           ))}

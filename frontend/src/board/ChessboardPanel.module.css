@@ -1,6 +1,6 @@
 .chessboardContainer {
   position: relative;
-  width: 48vw;
+  width: var(--board-size, 48vw);
   overflow: visible;
 }
 

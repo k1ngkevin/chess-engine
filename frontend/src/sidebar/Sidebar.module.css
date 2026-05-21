@@ -5,6 +5,7 @@
   background-color: #2a2a2a;
   border-radius: 8px;
   width: 100%;
+  min-height: 0;
   box-sizing: border-box;
   overflow-x: hidden;
 }
@@ -68,6 +69,15 @@
   width: 90%;
   display: flex;
   align-self: center;
+  min-height: 0;
+}
+
+.analyzeWrapper {
+  flex: 0 0 auto;
+}
+
+.movesListWrapper {
+  flex: 1 1 auto;
 }
 
 .importProgressContainer {
