@@ -20,6 +20,8 @@ import {
   classificationToSquareColor,
   classificationToIcon,
 } from "../lib/classifications";
+import blackKingIcon from "../assets/pieces/chess_black_king.png";
+import whiteKingIcon from "../assets/pieces/chess_white_king.png";
 
 type ChessboardProps = {
   fen: string;
@@ -115,12 +117,12 @@ function ChessboardPanel({
       ? {
           username: blackUsername,
           elo: blackElo,
-          icon: "/src/assets/pieces/chess_black_king.png",
+          icon: blackKingIcon,
         }
       : {
           username: whiteUsername,
           elo: whiteElo,
-          icon: "/src/assets/pieces/chess_white_king.png",
+          icon: whiteKingIcon,
         };
 
   const bottomPlayer =
@@ -128,12 +130,12 @@ function ChessboardPanel({
       ? {
           username: whiteUsername,
           elo: whiteElo,
-          icon: "/src/assets/pieces/chess_white_king.png",
+          icon: whiteKingIcon,
         }
       : {
           username: blackUsername,
           elo: blackElo,
-          icon: "/src/assets/pieces/chess_black_king.png",
+          icon: blackKingIcon,
         };
 
   const squareColor: Record<string, React.CSSProperties> = {};

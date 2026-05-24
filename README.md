@@ -12,13 +12,14 @@ A full-stack chess analysis app for importing or playing through chess games, re
 .
 ├── backend/              # FastAPI server and Stockfish engine wrapper
 ├── frontend/             # React/Vite chess analysis UI
-├── docker-compose.yml    # Runs frontend and backend together
+├── docker-compose.yml    # Development Compose setup
+├── docker-compose.prod.yml # Production Compose setup
 └── README.md
 ```
 
 ## Setup With Docker
 
-The easiest way to run the app is with Docker Compose.
+The easiest way to run the app for local development is with Docker Compose.
 
 ```bash
 docker compose up --build
@@ -45,6 +46,27 @@ The backend Docker image installs Stockfish and sets:
 
 ```text
 STOCKFISH_PATH=/usr/games/stockfish
+```
+
+## Production With Docker
+
+Build and run the production containers with:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
+
+In production, nginx serves the built frontend and proxies `/api/*` requests to
+the backend container. The frontend production image builds with:
+
+```text
+VITE_API_URL=/api
 ```
 
 ## Local Development

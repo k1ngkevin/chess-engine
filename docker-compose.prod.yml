@@ -1,0 +1,25 @@
+services:
+  backend:
+    image: chess-analyzer-backend:prod
+    build:
+      context: ./backend
+      target: production
+    container_name: chess-backend-prod
+    environment:
+      - STOCKFISH_PATH=/usr/games/stockfish
+      - CORS_ORIGINS=http://localhost:8080,http://localhost
+    restart: unless-stopped
+
+  frontend:
+    image: chess-analyzer-frontend:prod
+    build:
+      context: ./frontend
+      target: production
+      args:
+        VITE_API_URL: /api
+    container_name: chess-frontend-prod
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

@@ -5,6 +5,7 @@ from typing import List
 from starlette.concurrency import run_in_threadpool
 import engine
 import asyncio
+import os
 
 
 class AnalyzeRequest(BaseModel):
@@ -41,7 +42,12 @@ app = FastAPI()
 
 engine_lock = asyncio.Lock()
 
-origins = ["http://localhost:5173", "http://localhost:5174"]
+cors_origins = os.getenv("CORS_ORIGINS")
+origins = (
+    [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
+    if cors_origins
+    else ["http://localhost:5173", "http://localhost:5174"]
+)
 
 app.add_middleware(
     CORSMiddleware,

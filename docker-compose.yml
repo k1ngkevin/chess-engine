@@ -1,6 +1,9 @@
 services:
   backend:
-    build: ./backend
+    image: chess-analyzer-backend:dev
+    build:
+      context: ./backend
+      target: development
     container_name: chess-backend
     ports:
       - "8000:8000"
@@ -10,7 +13,10 @@ services:
       - ./backend:/app
 
   frontend:
-    build: ./frontend
+    image: chess-analyzer-frontend:dev
+    build:
+      context: ./frontend
+      target: development
     container_name: chess-frontend
     ports:
       - "5173:5173"
