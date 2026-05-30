@@ -8,6 +8,7 @@ import {
   analyzeFenBatch,
   fetchFenEvaluation,
   evaluateFensBatch,
+  saveGameData,
 } from "../api/api";
 import captureSound from "../assets/sounds/capture.mp3";
 import castleSound from "../assets/sounds/castle.mp3";
@@ -923,6 +924,23 @@ const App = () => {
       ...prev,
       ...newSettings,
     }));
+  }
+
+  async function saveGame() {
+    const payload = {
+      whitePlayer: whiteUsername,
+      blackPlayer: blackUsername,
+      whiteElo: whiteElo ?? null,
+      blackElo: blackElo ?? null,
+
+      mainlineFens: mainlineFens,
+      mainlineBestMoves: bestMovesArr,
+      branches: branches,
+      mainlineMoveEvaluations: playedMovesEval,
+      mainlineMoveClassifications: moveClassifications,
+    };
+
+    saveGameData(payload);
   }
 
   return (

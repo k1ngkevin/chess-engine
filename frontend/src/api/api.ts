@@ -1,10 +1,11 @@
-const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8000"
+const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
 import {
   type EngineEvaluation,
   type AnalyzeResponse,
   type AnalyzeBatchResponse,
   type EvaluateBatchResponse,
+  type Game,
 } from "../types/chessTypes.ts";
 export async function analyzePosition(
   fen: string,
@@ -74,4 +75,16 @@ export async function evaluateFensBatch(
 
   const data: EvaluateBatchResponse = await response.json();
   return data;
+}
+
+export async function saveGameData(gameData: Game) {
+  const response = await fetch(`${apiUrl}/save-game`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ gameData }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to Save Game: Response Status ${response.status}`);
+  }
+  return response.json();
 }

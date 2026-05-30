@@ -1,12 +1,14 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List
 from starlette.concurrency import run_in_threadpool
-import engine
+import engine as chess_engine
 import asyncio
 import os
-
+from database import get_db
+from sqlalchemy.orm import Session
+from sqlalchemy import text
 
 class AnalyzeRequest(BaseModel):
     fen: str = Field(description="FEN string for current chess position")
@@ -63,7 +65,7 @@ async def analyze(data: AnalyzeRequest):
     try:
         async with engine_lock:
             engine_response = await run_in_threadpool(
-                engine.get_best_moves,
+                chess_engine.get_best_moves,
                 fen=data.fen,
                 depth=data.depth,
                 num_results=data.num_results)
@@ -86,7 +88,7 @@ async def batch_analyze(data: AnalyzeBatchRequest):
         for current_fen in data.fens:
             try:
                 engine_response = await run_in_threadpool(
-                    engine.get_best_moves,
+                    chess_engine.get_best_moves,
                     fen=current_fen,
                     depth=data.depth,
                     num_results=data.num_results)
@@ -107,7 +109,7 @@ async def evaluate(data: EvaluateRequest):
     async with engine_lock:
         try:
             engine_response = await run_in_threadpool(
-                engine.evaluate_position,
+                chess_engine.evaluate_position,
                 fen=data.fen,
                 depth=data.depth,
             )
@@ -129,7 +131,7 @@ async def evaluate_moves(data: EvaluateMovesRequest):
         for current_fen in data.fens:
             try:
                 engine_response = await run_in_threadpool(
-                    engine.evaluate_position,
+                    chess_engine.evaluate_position,
                     fen=current_fen,
                     depth=data.depth,
                 )
@@ -140,3 +142,8 @@ async def evaluate_moves(data: EvaluateMovesRequest):
                 engine_evaluations.append(None)
 
     return {"move_evaluations": engine_evaluations}
+
+@app.post("/save-game")
+async def save_game(db: Session = Depends(get_db)):
+    db.execute(text(""))
+    return {"database": "ok"}

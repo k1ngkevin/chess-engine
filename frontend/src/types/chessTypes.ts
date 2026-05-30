@@ -3,7 +3,7 @@ export type EngineMove = {
   san: string;
   centipawn: number | null;
   mate: number | null;
-  line: string[]
+  line: string[];
 };
 
 export type EngineEvaluation = {
@@ -15,7 +15,7 @@ export type GameMove = {
   san: string;
   from: string;
   to: string;
-}
+};
 
 export type ImportProgress = {
   current: number;
@@ -50,7 +50,7 @@ export type Arrow = {
   startSquare: string;
   endSquare: string;
   color: string;
-}
+};
 
 export type MoveClassification =
   | "book"
@@ -70,10 +70,22 @@ export type NullableMoveClassification = MoveClassificationResult | null;
 
 export type ClassificationCounts = Record<MoveClassification, number>;
 
-export type SidebarView = "import" | "report" | "analysis"
+export type SidebarView = "import" | "report" | "analysis";
 
 export type Settings = {
   showEngineArrows: boolean;
   engineDepth: number;
   numberOfLines: number;
+};
+
+export type Game = {
+  whitePlayer: string;
+  blackPlayer: string;
+  whiteElo: number | null;
+  blackElo: number | null;
+  mainlineFens: string[];
+  mainlineBestMoves: (EngineMove[] | null)[];
+  branches: Branch[];
+  mainlineMoveEvaluations: (EngineEvaluation | null)[];
+  mainlineMoveClassifications: NullableMoveClassification[];
 };
