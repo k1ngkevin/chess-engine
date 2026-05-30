@@ -9,8 +9,11 @@ services:
       - "8000:8000"
     environment:
       - STOCKFISH_PATH=/usr/games/stockfish
+      - DATABASE_URL=postgresql+psycopg://chess_user:chess_password@db:5432/chess_analyzer
     volumes:
       - ./backend:/app
+    depends_on:
+      - db
 
   frontend:
     image: chess-analyzer-frontend:dev
@@ -27,3 +30,14 @@ services:
       - /app/node_modules
     depends_on:
       - backend
+
+  db:
+    image: postgres-16
+    container-name: chess-db
+    environment:
+      POSTGRES_DB: chess_analyzer
+      POSTGRES_USER: chess_user
+      POSTGRES_PASSWORD: chess_password
+    ports: -"5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data

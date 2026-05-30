@@ -3,3 +3,5 @@ pydantic
 chess
 python-dotenv
 uvicorn
+sqlalchemy
+psycopg
